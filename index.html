@@ -190,7 +190,7 @@
       <option>Doutorado</option></select></div>
   </div>
   <div class="row3">
-    <div><label class="q">Seu identificador<small>o código S que você recebeu da coordenação</small></label>
+    <div><label class="q">Seu identificador<small>o código S que você recebeu da coordenação — se ainda não recebeu, pode deixar em branco</small></label>
       <select name="participant_id" id="pid"></select></div>
     <div><label class="q">Artigo</label>
       <input type="text" name="article_id" value="PILOTO" readonly></div>
@@ -464,7 +464,7 @@ document.getElementById('f').addEventListener('submit',async e=>{
 
   need(g('full_name'),'Nome completo');need(g('age'),'Idade');
   need(g('gender'),'Gênero');need(g('program'),'Programa');
-  need(g('participant_id'),'Identificador');need(g('elapsed_minutes'),'Tempo total');
+  need(g('elapsed_minutes'),'Tempo total');
   const tcle=document.querySelector('input[name=tcle]:checked');
   if(!tcle)errs.push('• Termo de consentimento: marque se aceita participar.');
   else if(tcle.value==='nao_aceito')errs.push('• Você marcou "não aceito". Se mudar de ideia, selecione "Li e aceito participar".');
@@ -547,7 +547,11 @@ document.getElementById('f').addEventListener('submit',async e=>{
     self_assessment:sa,
     reflection_log:{q1:g('r1'),q2:g('r2'),q3:g('r3')}
   };
-  const fname=`${payload.participant_id}_${payload.article_id}.json`;
+  // sem código S nesta rodada? identifica pelo nome (slug) no nome do arquivo
+  const slug=g('full_name').normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);
+  const pid=payload.participant_id||`X_${slug||'sem-nome'}`;
+  const fname=`${pid}_${payload.article_id}.json`;
   const jtxt=JSON.stringify(payload,null,2);
   const baixar=()=>{const blob=new Blob([jtxt],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);

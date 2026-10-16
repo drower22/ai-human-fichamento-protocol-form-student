@@ -3,7 +3,7 @@ export default async function handler(req, res) {
   try {
     const { filename, json } = req.body ?? {};
     if (typeof filename !== 'string' ||
-        !/^(S\d{2}_(PILOTO|A\d{2})|E-R\d+-(PILOTO|A\d{2})-J\d)\.json$/.test(filename))
+        !/^((S\d{2}|X_[a-z0-9-]{1,50})_(PILOTO|A\d{2})|E-R\d+-(PILOTO|A\d{2})-J\d)\.json$/.test(filename))
       return res.status(400).json({ error: 'invalid filename' });
     if (typeof json !== 'string' || json.length > 200000)
       return res.status(400).json({ error: 'invalid payload' });
