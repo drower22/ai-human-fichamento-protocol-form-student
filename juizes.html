@@ -194,7 +194,8 @@
   <div class="row3">
     <div><label class="q">Juiz</label>
       <select name="judge_id"><option value="">—</option>
-      <option>J1</option><option>J2</option><option>J3</option><option>J4</option></select></div>
+      <option>J1</option><option>J2</option><option>J3</option><option>J4</option></select>
+      <input id="judgeLock" hidden disabled style="background:#f8fafc;font-weight:700"></div>
     <div><label class="q">Rodada</label>
       <select name="round"><option value="0">0 — Piloto</option>
       <option value="1">1</option><option value="2">2</option></select></div>
@@ -378,6 +379,13 @@ function renderFich(o){
     <p><b>Teórica:</b> ${esc(o.contribution?.theoretical||'—')}<br>
     <b>Prática:</b> ${esc(o.contribution?.practical||'—')}</p>
   </div>`;
+}
+
+// link pessoal ?j=N: fixa o código do juiz e esconde a lista
+const _j=new URLSearchParams(location.search).get('j');
+if(_j&&/^[1-4]$/.test(_j)){
+  const sel=q('[name="judge_id"]'),lock=document.getElementById('judgeLock');
+  sel.value='J'+_j;sel.hidden=true;lock.hidden=false;lock.value='J'+_j;
 }
 
 // TCLE gate: aceite troca de tela (termo some, form aparece)
