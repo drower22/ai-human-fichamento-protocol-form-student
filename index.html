@@ -53,6 +53,12 @@
   .anch{font-size:13.5px;color:var(--slate);line-height:1.55;margin:6px 0 10px}
   .anch b{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;
     min-width:22px;text-align:center;padding:0 5px;margin-right:6px}
+  .tcle{border:1px solid var(--line);border-radius:12px;background:#f8fafc;
+    padding:20px 24px;max-height:340px;overflow-y:auto;font-size:15px;
+    line-height:1.65;color:var(--ink);margin:14px 0}
+  .tcle h3{font-size:15px;color:var(--navy);margin:18px 0 6px}
+  .tcle h3:first-child{margin-top:0}
+  .tcle p{margin:0 0 10px}
 </style>
 </head>
 <body>
@@ -73,22 +79,73 @@
 
 <section>
   <h2>1. Termo de Consentimento Livre e Esclarecido</h2>
-  <p class="desc">Você está sendo convidado(a) a participar de uma pesquisa acadêmica que
-  compara fichamentos produzidos por estudantes e por inteligência artificial. A sua
-  participação consiste em ler um artigo e produzir um fichamento usando este formulário.
+  <p class="desc">Leia o termo abaixo por completo antes de decidir. O formulário só
+  será liberado depois da sua resposta.</p>
 
-  • <b>Voluntariedade:</b> participar é totalmente voluntário. Você pode desistir a
-  qualquer momento, sem qualquer prejuízo ou necessidade de justificativa — basta não
-  enviar o arquivo ou pedir a exclusão dos seus dados.
-  • <b>Anonimato:</b> seu fichamento é identificado apenas por um código (S01, S02…).
-  Seus dados pessoais ficam em arquivo privado da coordenação e nunca são mostrados
-  aos avaliadores.
-  • <b>Uso dos dados:</b> suas respostas serão analisadas de forma agregada para fins
-  de pesquisa científica, podendo aparecer em publicações apenas de forma anonimizada.
-  • <b>Riscos e benefícios:</b> não há riscos previstos além do tempo dedicado. O
-  benefício é contribuir para um protocolo público e aprimorar sua prática de leitura.
+  <div class="tcle">
+  <h3>Identificação do projeto e do responsável</h3>
+  <p><b>Título da pesquisa:</b> Protocolo de validação iterativa IA–humano para a
+  produção de fichamentos de revisão de literatura.<br>
+  <b>Pesquisador responsável:</b> coordenação do grupo de pesquisa (contato
+  informado pelo professor no momento do convite).<br>
+  <b>Instituição:</b> Universidade Federal do Paraná (UFPR).</p>
 
-  Em caso de dúvidas, fale com a coordenação antes de enviar.</p>
+  <h3>Convite e justificativa</h3>
+  <p>Você está sendo convidado(a) a participar de um estudo que desenvolve e valida
+  um protocolo de produção de fichamentos de literatura científica, comparando
+  fichamentos elaborados por estudantes e por inteligência artificial. A pesquisa
+  busca tornar o trabalho mecânico de fichamento mais confiável e auditável,
+  liberando tempo do pesquisador para reflexão e análise teórica.</p>
+
+  <h3>O que a sua participação envolve</h3>
+  <p>Ler um artigo científico indicado e produzir um fichamento completo usando
+  este formulário, incluindo: resumo, questão de pesquisa, teorias, conceitos,
+  metodologia, achados e contribuição, sempre com referências de página e linha
+  do artigo. Ao final, você também fará uma auto-avaliação e um breve registro de
+  reflexão, e enviará o arquivo gerado por e-mail à coordenação.</p>
+
+  <h3>Critério de seleção</h3>
+  <p>Você foi convidado(a) por ser estudante do curso e integrante do grupo de
+  respondentes sorteado pela coordenação para esta rodada do estudo.</p>
+
+  <h3>Desconfortos e riscos</h3>
+  <p>Não há riscos previstos além do tempo dedicado à leitura e ao fichamento. Caso
+  sinta qualquer desconforto ou cansaço, você pode interromper a atividade a
+  qualquer momento.</p>
+
+  <h3>Benefícios</h3>
+  <p>Não há benefício financeiro. Os benefícios esperados são o aprimoramento da
+  sua prática de leitura e fichamento acadêmico e a contribuição para um protocolo
+  público e replicável de revisão de literatura.</p>
+
+  <h3>Despesas e ressarcimento</h3>
+  <p>A participação não envolve custos para você e não há remuneração prevista.
+  O formulário funciona offline no seu navegador e nenhum dado é enviado
+  automaticamente a nenhum servidor.</p>
+
+  <h3>Sigilo, anonimato e proteção de dados</h3>
+  <p>Seu fichamento é identificado apenas por um código (S01, S02…). Os juízes
+  avaliadores recebem os fichamentos sem qualquer identificação dos autores.
+  Seus dados pessoais (nome, idade, gênero, programa) ficam em arquivo privado da
+  coordenação, separados do material avaliado, e são tratados conforme a Lei Geral
+  de Proteção de Dados (LGPD, Lei nº 13.709/2018). Resultados publicados serão
+  sempre agregados e anonimizados.</p>
+
+  <h3>Voluntariedade e direito de desistência</h3>
+  <p>Participar é totalmente voluntário. Você pode recusar-se agora, desistir a
+  qualquer momento e solicitar a exclusão dos seus dados, sem justificativa e sem
+  qualquer prejuízo acadêmico ou pessoal. Para desistir, basta não enviar o
+  arquivo ou pedir a exclusão à coordenação.</p>
+
+  <h3>Dúvidas</h3>
+  <p>Em caso de dúvidas sobre a pesquisa, fale com a coordenação antes de enviar.
+  Este estudo segue as orientações éticas da Resolução CNS nº 510/2016 para
+  pesquisas em ciências humanas e sociais.</p>
+  </div>
+
+  <p style="font-size:15px;margin:14px 0 8px"><b>Declaração:</b> declaro que li e
+  compreendi as informações acima, que tive oportunidade de esclarecer dúvidas e
+  que minha decisão de participar é livre e esclarecida.</p>
   <div class="radios" style="font-size:16px">
     <label><input type="radio" name="tcle" value="aceito"> <b>Li e aceito participar</b></label>
     <label><input type="radio" name="tcle" value="nao_aceito"> Não aceito participar</label>
