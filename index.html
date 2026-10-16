@@ -50,6 +50,13 @@
   .ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:10px;
     padding:16px 20px;font-size:15px;margin-bottom:18px;display:none}
   .hint{font-size:13px;color:var(--slate);margin-top:8px}
+  .addbtn{background:#fff;color:var(--blue);border:1.5px dashed var(--blue);
+    border-radius:10px;font-size:15px;font-weight:600;padding:11px 22px;
+    cursor:pointer;width:auto;margin-top:6px}
+  .addbtn:hover{background:#eff6ff}
+  .rm{display:inline-block;font-size:13px;color:var(--err);margin-top:6px;
+    text-decoration:none}
+  .rm:hover{text-decoration:underline}
   .anch{font-size:13.5px;color:var(--slate);line-height:1.55;margin:6px 0 10px}
   .anch b{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;
     min-width:22px;text-align:center;padding:0 5px;margin-right:6px}
@@ -215,9 +222,10 @@ e, idealmente, o trecho literal.</p>
 <section>
   <h2>6. Conceitos-chave</h2>
   <p class="desc">Liste de 3 a 4 conceitos centrais do artigo — os construtos sem os quais
-  o argumento não se sustenta. Para cada um: o nome, como o artigo o define ou usa,
-  e onde ele aparece (p.N Lnnn).</p>
+  o argumento não se sustenta. Para cada um: o nome e como o artigo o define ou usa,
+  já incluindo a evidência no próprio texto (p.N Lnnn) e o trecho literal.</p>
   <div id="concepts"></div>
+  <button type="button" class="addbtn" id="addC">+ Adicionar conceito 4 (opcional)</button>
 </section>
 
 <section>
@@ -336,13 +344,23 @@ POOL.forEach(t=>{
         .classList.toggle('show',r.value!=='does_not_use');}));
 });
 
-// concept slots (1-3 obrig, 4 opc)
-document.getElementById('concepts').innerHTML=[1,2,3,4].map(i=>`
-  <div class="slot"><h3>Conceito ${i}${i===4?' (opcional)':''}</h3>
+// concept slots (1-3 obrig; 4 sob demanda, max 4 pelo schema)
+const concepts=document.getElementById('concepts');
+const addC=document.getElementById('addC');
+const slotC=i=>{const d=document.createElement('div');d.className='slot';
+  d.innerHTML=`<h3>Conceito ${i}${i>3?' (opcional)':''}</h3>
     <label class="q">Nome</label><input type="text" name="kc${i}_c">
-    <label class="q">Definição / uso no artigo</label><textarea name="kc${i}_d" class="short"></textarea>
-    <label class="q">Evidência</label><input type="text" name="kc${i}_e" placeholder="(p.N Lnnn) trecho literal">
-  </div>`).join('');
+    <label class="q">Definição / uso no artigo<small>inclua a evidência no próprio texto: (p.N Lnnn) e o trecho literal</small></label>
+    <textarea name="kc${i}_d" class="short"></textarea>
+    ${i>3?'<a href="#" class="rm">remover este conceito</a>':''}`;
+  return d;};
+let nC=0;
+const addConcept=()=>{if(nC>=4)return;nC++;concepts.appendChild(slotC(nC));
+  addC.style.display=nC>=4?'none':'';};
+[1,2,3].forEach(addConcept);
+addC.onclick=addConcept;
+concepts.addEventListener('click',e=>{const a=e.target.closest('.rm');
+  if(!a)return;e.preventDefault();a.closest('.slot').remove();nC--;addC.style.display='';});
 
 // finding slots (1-3 obrig, 4-5 opc)
 document.getElementById('findings').innerHTML=[1,2,3,4,5].map(i=>`
@@ -436,12 +454,13 @@ document.getElementById('f').addEventListener('submit',e=>{
 
   const concepts=[];
   for(let i=1;i<=4;i++){
-    const c=g('kc'+i+'_c'),d=g('kc'+i+'_d'),ev=g('kc'+i+'_e');
+    const c=g('kc'+i+'_c'),d=g('kc'+i+'_d');
     if(i<=3)need(c,`Conceito ${i} (nome)`);
     if(!c)continue;
-    const{refs,quote}=parseEv(ev);
-    if(!refs.length)errs.push(`• Conceito ${i}: informe a evidência (p.N Lnnn).`);
-    concepts.push({concept:c,definition:d,quote,source_refs:refs});
+    need(d,`Conceito ${i} (definição / uso)`);
+    const{refs}=parseEv(d);
+    if(!refs.length)errs.push(`• Conceito ${i}: inclua a evidência (p.N Lnnn) no texto da definição.`);
+    concepts.push({concept:c,definition:d,quote:'',source_refs:refs});
   }
 
   need(g('m_study'),'Tipo de estudo');need(g('m_design'),'Delineamento');
