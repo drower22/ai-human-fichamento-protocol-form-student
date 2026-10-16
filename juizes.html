@@ -263,6 +263,14 @@
   </div>
   <label class="q">Por quê?</label>
   <textarea name="pref_why"></textarea>
+  <div class="row2">
+    <div><label class="q">Sua familiaridade com este artigo<small>você indicou este artigo? leu antes?</small></label>
+      <select name="confidence"><option value="">—</option>
+      <option value="alta">Alta — é um artigo que eu indiquei / conheço bem</option>
+      <option value="media">Média — conheço, mas não em detalhe</option>
+      <option value="baixa">Baixa — não conhecia este artigo</option></select></div>
+    <div></div>
+  </div>
   <label class="q">Observações gerais<small>opcional — impressões sobre o par, suspeitas de origem, etc.</small></label>
   <textarea name="notes" class="short"></textarea>
 </section>
@@ -489,7 +497,7 @@ document.getElementById('f').addEventListener('submit',async e=>{
     scores:{A:sa,B:sb},
     qualitative:{A:{question_would_ask:g('qa_A'),missing:g('miss_A')},
                  B:{question_would_ask:g('qa_B'),missing:g('miss_B')},
-                 preferred:pref.value,why:g('pref_why')},
+                 preferred:pref.value,why:g('pref_why'),confidence:g('confidence')},
     error_taxonomy:['A','B'].reduce((o,k)=>{
       const by={};
       SECS.forEach(s=>{const codes=[...document.querySelectorAll(`input[name=e_${k}_${s}]:checked`)].map(c=>c.value);
