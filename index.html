@@ -222,9 +222,9 @@ e, idealmente, o trecho literal.</p>
 
 <section>
   <h2>6. Conceitos-chave</h2>
-  <p class="desc">Liste os conceitos centrais do artigo — mínimo 3, os construtos sem os
-  quais o argumento não se sustenta (adicione mais se o artigo pedir). Para cada um: o
-  nome e como o artigo o define ou usa, já incluindo a evidência no próprio texto
+  <p class="desc">Liste os conceitos centrais do artigo (mínimo 1 — adicione mais se o
+  artigo pedir): os construtos sem os quais o argumento não se sustenta. Para cada um:
+  o nome e como o artigo o define ou usa; se puder, inclua a evidência no próprio texto
   (p.N Lnnn) e o trecho literal.</p>
   <div id="concepts"></div>
   <button type="button" class="addbtn" id="addC">+ Adicionar conceito (opcional)</button>
@@ -242,7 +242,7 @@ e, idealmente, o trecho literal.</p>
       <option value="outro">Outro</option></select></div>
     <div><label class="q">Delineamento<small>ex.: estudo de caso único exploratório</small></label>
       <input type="text" name="m_design"></div>
-    <div><label class="q">Referência<small>(p.N Lnnn) da seção de método</small></label>
+    <div><label class="q">Referência<small>opcional — (p.N Lnnn) da seção de método</small></label>
       <input type="text" name="m_refs"></div>
   </div>
   <div class="row3">
@@ -265,11 +265,12 @@ e, idealmente, o trecho literal.</p>
 
 <section>
   <h2>8. Achados principais</h2>
-  <p class="desc">Liste de 3 a 5 achados principais do artigo, com suas palavras.
-  Classifique cada um: empírico (veio dos dados), proposição (afirmação proposta
-  para teste futuro) ou modelo (framework/figura que organiza o argumento).
-  Indique onde está (p.N Lnnn).</p>
+  <p class="desc">Liste os achados principais do artigo (mínimo 1 — adicione mais se
+  precisar), com suas palavras. Classifique cada um: empírico (veio dos dados),
+  proposição (afirmação proposta para teste futuro) ou modelo (framework/figura que
+  organiza o argumento). Se puder, indique onde está (p.N Lnnn).</p>
   <div id="findings"></div>
+  <button type="button" class="addbtn" id="addF">+ Adicionar achado (opcional)</button>
 </section>
 
 <section>
@@ -352,9 +353,9 @@ const concepts=document.getElementById('concepts');
 const addC=document.getElementById('addC');
 let seqC=0;
 const renum=()=>concepts.querySelectorAll('.slot h3').forEach((h,i)=>
-  h.textContent=`Conceito ${i+1}${i>=3?' (opcional)':''}`);
+  h.textContent=`Conceito ${i+1}${i>=1?' (opcional)':''}`);
 const updC=()=>{const n=concepts.children.length;
-  concepts.querySelectorAll('.rm').forEach((a,i)=>a.hidden=i<3);
+  concepts.querySelectorAll('.rm').forEach((a,i)=>a.hidden=i<1);
   addC.style.display=n>=8?'none':'';};
 const addConcept=()=>{if(concepts.children.length>=8)return;seqC++;
   const d=document.createElement('div');d.className='slot';
@@ -364,25 +365,39 @@ const addConcept=()=>{if(concepts.children.length>=8)return;seqC++;
     <textarea name="kc${seqC}_d" class="short"></textarea>
     <a href="#" class="rm" hidden>remover este conceito</a>`;
   concepts.appendChild(d);renum();updC();};
-[1,2,3].forEach(addConcept);
+addConcept();
 addC.onclick=addConcept;
 concepts.addEventListener('click',e=>{const a=e.target.closest('.rm');
   if(!a||a.hidden)return;e.preventDefault();a.closest('.slot').remove();renum();updC();});
 
-// finding slots (1-3 obrig, 4-5 opc)
-document.getElementById('findings').innerHTML=[1,2,3,4,5].map(i=>`
-  <div class="slot"><h3>Achado ${i}${i>3?' (opcional)':''}</h3>
-    <label class="q">Achado / proposição</label><textarea name="f${i}_f" class="short"></textarea>
+// finding slots (1 obrig; demais sob demanda, max 8)
+const findings=document.getElementById('findings');
+const addF=document.getElementById('addF');
+let seqF=0;
+const renumF=()=>findings.querySelectorAll('.slot h3').forEach((h,i)=>
+  h.textContent=`Achado ${i+1}${i>=1?' (opcional)':''}`);
+const updF=()=>{const n=findings.children.length;
+  findings.querySelectorAll('.rm').forEach((a,i)=>a.hidden=i<1);
+  addF.style.display=n>=8?'none':'';};
+const addFinding=()=>{if(findings.children.length>=8)return;seqF++;
+  const d=document.createElement('div');d.className='slot';
+  d.innerHTML=`<h3></h3>
+    <label class="q">Achado / proposição</label><textarea name="f${seqF}_f" class="short"></textarea>
     <div class="row2">
       <div><label class="q">Tipo</label>
-        <select name="f${i}_t"><option value="">—</option>
+        <select name="f${seqF}_t"><option value="">—</option>
         <option value="empirical">Empírico (veio dos dados)</option>
         <option value="proposition">Proposição (a testar)</option>
         <option value="model">Modelo / framework</option></select></div>
-      <div><label class="q">Evidência</label>
-        <input type="text" name="f${i}_e" placeholder="(p.N Lnnn) trecho literal"></div>
+      <div><label class="q">Evidência<small>opcional</small></label>
+        <input type="text" name="f${seqF}_e" placeholder="(p.N Lnnn) trecho literal"></div>
     </div>
-  </div>`).join('');
+    <a href="#" class="rm" hidden>remover este achado</a>`;
+  findings.appendChild(d);renumF();updF();};
+addFinding();
+addF.onclick=addFinding;
+findings.addEventListener('click',e=>{const a=e.target.closest('.rm');
+  if(!a||a.hidden)return;e.preventDefault();a.closest('.slot').remove();renumF();updF();});
 
 // self assessment
 const SECS=['executive_summary','research_question','theories','key_concepts',
@@ -450,8 +465,6 @@ document.getElementById('f').addEventListener('submit',async e=>{
     const v=document.querySelector(`input[name=v_${t.item_id}]:checked`);
     if(!v){errs.push(`• ${t.item_id}: escolha um veredito.`);return;}
     const ev=g('e_'+t.item_id);const{refs,quote}=parseEv(ev);
-    if(v.value!=='does_not_use'&&!refs.length)
-      errs.push(`• ${t.item_id}: veredito "${v.value}" exige referência (p.N Lnnn) na evidência.`);
     verdicts.push({item_id:t.item_id,name:t.name,verdict:v.value,source_refs:refs,quote,note:''});
   });
 
@@ -467,28 +480,30 @@ document.getElementById('f').addEventListener('submit',async e=>{
   document.querySelectorAll('#concepts .slot').forEach((s,idx)=>{
     const c=s.querySelector('input').value.trim(),d=s.querySelector('textarea').value.trim();
     const n=idx+1;
-    if(n<=3)need(c,`Conceito ${n} (nome)`);
-    if(!c)return;
-    need(d,`Conceito ${n} (definição / uso)`);
+    if(n===1)need(c,'Conceito 1 (nome)');
+    if(!c&&!d)return;
+    if(!c){errs.push(`• Conceito ${n}: informe o nome.`);return;}
+    if(!d){errs.push(`• Conceito ${n}: informe a definição / uso.`);return;}
     const{refs}=parseEv(d);
-    if(!refs.length)errs.push(`• Conceito ${n}: inclua a evidência (p.N Lnnn) no texto da definição.`);
     concepts.push({concept:c,definition:d,quote:'',source_refs:refs});
   });
 
   need(g('m_study'),'Tipo de estudo');need(g('m_design'),'Delineamento');
   const mrefs=parseEv(g('m_refs')).refs;
-  if(!mrefs.length)errs.push('• Metodologia: informe a referência (p.N Lnnn).');
 
   const findings=[];
-  for(let i=1;i<=5;i++){
-    const f=g('f'+i+'_f'),t=g('f'+i+'_t'),ev=g('f'+i+'_e');
-    if(i<=3)need(f,`Achado ${i}`);
-    if(!f)continue;
+  document.querySelectorAll('#findings .slot').forEach((s,idx)=>{
+    const n=idx+1;
+    const f=s.querySelector('textarea').value.trim();
+    const t=s.querySelector('select').value;
+    const ev=s.querySelector('input').value.trim();
+    if(n===1)need(f,'Achado 1');
+    if(!f&&!ev)return;
+    if(!f){errs.push(`• Achado ${n}: escreva o achado.`);return;}
+    if(!t)errs.push(`• Achado ${n}: escolha o tipo.`);
     const{refs,quote}=parseEv(ev);
-    if(!t)errs.push(`• Achado ${i}: escolha o tipo.`);
-    if(!refs.length)errs.push(`• Achado ${i}: informe a evidência (p.N Lnnn).`);
-    findings.push({finding:f,type:t,quote,source_refs:refs});
-  }
+    findings.push({finding:f,type:t||'empirical',quote,source_refs:refs});
+  });
 
   need(g('c_theo'),'Contribuição teórica');need(g('c_prac'),'Contribuição prática');
 
