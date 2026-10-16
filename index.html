@@ -25,8 +25,8 @@
   textarea{min-height:110px;resize:vertical}
   textarea.short{min-height:70px}
   input:focus,textarea:focus,select:focus{outline:2px solid #93c5fd;border-color:var(--blue)}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end}
   .theory{border:1px solid var(--soft);border-radius:12px;padding:16px 18px;margin:12px 0}
   .theory .tname{font-weight:700;color:var(--navy);font-size:16px}
   .theory .tdef{font-size:14px;color:var(--slate);margin:4px 0 10px}
@@ -221,11 +221,12 @@ e, idealmente, o trecho literal.</p>
 
 <section>
   <h2>6. Conceitos-chave</h2>
-  <p class="desc">Liste de 3 a 4 conceitos centrais do artigo — os construtos sem os quais
-  o argumento não se sustenta. Para cada um: o nome e como o artigo o define ou usa,
-  já incluindo a evidência no próprio texto (p.N Lnnn) e o trecho literal.</p>
+  <p class="desc">Liste os conceitos centrais do artigo — mínimo 3, os construtos sem os
+  quais o argumento não se sustenta (adicione mais se o artigo pedir). Para cada um: o
+  nome e como o artigo o define ou usa, já incluindo a evidência no próprio texto
+  (p.N Lnnn) e o trecho literal.</p>
   <div id="concepts"></div>
-  <button type="button" class="addbtn" id="addC">+ Adicionar conceito 4 (opcional)</button>
+  <button type="button" class="addbtn" id="addC">+ Adicionar conceito (opcional)</button>
 </section>
 
 <section>
@@ -344,23 +345,27 @@ POOL.forEach(t=>{
         .classList.toggle('show',r.value!=='does_not_use');}));
 });
 
-// concept slots (1-3 obrig; 4 sob demanda, max 4 pelo schema)
+// concept slots (1-3 obrig; demais sob demanda, max 8)
 const concepts=document.getElementById('concepts');
 const addC=document.getElementById('addC');
-const slotC=i=>{const d=document.createElement('div');d.className='slot';
-  d.innerHTML=`<h3>Conceito ${i}${i>3?' (opcional)':''}</h3>
-    <label class="q">Nome</label><input type="text" name="kc${i}_c">
+let seqC=0;
+const renum=()=>concepts.querySelectorAll('.slot h3').forEach((h,i)=>
+  h.textContent=`Conceito ${i+1}${i>=3?' (opcional)':''}`);
+const updC=()=>{const n=concepts.children.length;
+  concepts.querySelectorAll('.rm').forEach((a,i)=>a.hidden=i<3);
+  addC.style.display=n>=8?'none':'';};
+const addConcept=()=>{if(concepts.children.length>=8)return;seqC++;
+  const d=document.createElement('div');d.className='slot';
+  d.innerHTML=`<h3></h3>
+    <label class="q">Nome</label><input type="text" name="kc${seqC}_c">
     <label class="q">Definição / uso no artigo<small>inclua a evidência no próprio texto: (p.N Lnnn) e o trecho literal</small></label>
-    <textarea name="kc${i}_d" class="short"></textarea>
-    ${i>3?'<a href="#" class="rm">remover este conceito</a>':''}`;
-  return d;};
-let nC=0;
-const addConcept=()=>{if(nC>=4)return;nC++;concepts.appendChild(slotC(nC));
-  addC.style.display=nC>=4?'none':'';};
+    <textarea name="kc${seqC}_d" class="short"></textarea>
+    <a href="#" class="rm" hidden>remover este conceito</a>`;
+  concepts.appendChild(d);renum();updC();};
 [1,2,3].forEach(addConcept);
 addC.onclick=addConcept;
 concepts.addEventListener('click',e=>{const a=e.target.closest('.rm');
-  if(!a)return;e.preventDefault();a.closest('.slot').remove();nC--;addC.style.display='';});
+  if(!a||a.hidden)return;e.preventDefault();a.closest('.slot').remove();renum();updC();});
 
 // finding slots (1-3 obrig, 4-5 opc)
 document.getElementById('findings').innerHTML=[1,2,3,4,5].map(i=>`
@@ -453,15 +458,16 @@ document.getElementById('f').addEventListener('submit',e=>{
   });
 
   const concepts=[];
-  for(let i=1;i<=4;i++){
-    const c=g('kc'+i+'_c'),d=g('kc'+i+'_d');
-    if(i<=3)need(c,`Conceito ${i} (nome)`);
-    if(!c)continue;
-    need(d,`Conceito ${i} (definição / uso)`);
+  document.querySelectorAll('#concepts .slot').forEach((s,idx)=>{
+    const c=s.querySelector('input').value.trim(),d=s.querySelector('textarea').value.trim();
+    const n=idx+1;
+    if(n<=3)need(c,`Conceito ${n} (nome)`);
+    if(!c)return;
+    need(d,`Conceito ${n} (definição / uso)`);
     const{refs}=parseEv(d);
-    if(!refs.length)errs.push(`• Conceito ${i}: inclua a evidência (p.N Lnnn) no texto da definição.`);
+    if(!refs.length)errs.push(`• Conceito ${n}: inclua a evidência (p.N Lnnn) no texto da definição.`);
     concepts.push({concept:c,definition:d,quote:'',source_refs:refs});
-  }
+  });
 
   need(g('m_study'),'Tipo de estudo');need(g('m_design'),'Delineamento');
   const mrefs=parseEv(g('m_refs')).refs;
