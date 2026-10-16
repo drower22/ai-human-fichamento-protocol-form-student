@@ -57,6 +57,12 @@
   .rm{display:inline-block;font-size:13px;color:var(--err);margin-top:6px;
     text-decoration:none}
   .rm:hover{text-decoration:underline}
+  .done{text-align:center;padding:80px 20px}
+  .done h2{font-size:30px;color:var(--navy);margin:18px 0 10px}
+  .done p{font-size:17px;color:var(--slate);line-height:1.6}
+  .done .check{width:64px;height:64px;border-radius:50%;background:var(--blue);
+    display:inline-flex;align-items:center;justify-content:center}
+  .done .check svg{stroke:#fff}
   .anch{font-size:13.5px;color:var(--slate);line-height:1.55;margin:6px 0 10px}
   .anch b{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;
     min-width:22px;text-align:center;padding:0 5px;margin-right:6px}
@@ -304,9 +310,17 @@ e, idealmente, o trecho literal.</p>
 </section>
 
 <button type="submit">Enviar meu fichamento</button>
-<button type="button" class="addbtn" id="dlBtn" style="margin-top:12px;width:100%">Prefiro baixar o .json e enviar por e-mail</button>
 </div><!-- /resto -->
 </form>
+
+<div id="done" hidden>
+  <div class="done">
+    <span class="check"><svg class="icon" viewBox="0 0 24 24" style="width:34px;height:34px"><path d="M20 6L9 17l-5-5"/></svg></span>
+    <h2>Fichamento enviado!</h2>
+    <p id="doneMsg"></p>
+    <p>Obrigado pela participação — você já pode fechar esta página.</p>
+  </div>
+</div>
 </div>
 
 <script>
@@ -442,10 +456,6 @@ const parseEv=t=>{const refs=[...(t.match(/p\.\d+(?:-\d+)?(?:[\/ ]L\d+(?:-\d+)?)
     .replace(/[()\[\];,\-—]/g,' ').replace(/\s+/g,' ').trim();
   return{refs,quote};};
 
-let forceDl=false;
-document.getElementById('dlBtn').onclick=()=>{forceDl=true;
-  document.getElementById('f').requestSubmit();};
-
 document.getElementById('f').addEventListener('submit',async e=>{
   e.preventDefault();
   const errs=[];
@@ -542,25 +552,21 @@ document.getElementById('f').addEventListener('submit',async e=>{
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download=fname;a.click();};
 
-  if(!forceDl){
-    try{
-      const r=await fetch('/api/send',{method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({filename:fname,json:jtxt})});
-      if(!r.ok)throw 0;
-      okb.textContent=`Fichamento ${fname} enviado com sucesso. Obrigado pela participação!`;
-      okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
-      return;
-    }catch{
-      baixar();
-      okb.textContent=`O envio automático falhou. Baixamos o arquivo ${fname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
-      okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
-      return;
-    }
+  try{
+    const r=await fetch('/api/send',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({filename:fname,json:jtxt})});
+    if(!r.ok)throw 0;
+    document.getElementById('f').style.display='none';
+    document.getElementById('doneMsg').textContent=
+      `Recebemos o seu fichamento (${fname}).`;
+    document.getElementById('done').hidden=false;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch{
+    baixar();
+    okb.textContent=`O envio automático falhou. Baixamos o arquivo ${fname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
+    okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
   }
-  forceDl=false;baixar();
-  okb.textContent=`Arquivo ${fname} baixado. Envie-o EM ANEXO por e-mail à coordenação.`;
-  okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
 });
 </script>
 </body>
