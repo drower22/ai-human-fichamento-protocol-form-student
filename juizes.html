@@ -106,7 +106,7 @@
 
 <form id="f" novalidate>
 
-<section>
+<section id="tcleSec">
   <h2>1. Termo de Consentimento Livre e Esclarecido</h2>
   <p class="desc">Leia o termo abaixo por completo antes de decidir. A avaliação só
   será liberada depois da sua resposta.</p>
@@ -372,13 +372,14 @@ function renderFich(o){
   </div>`;
 }
 
-// TCLE gate: resto do form só aparece após aceite
+// TCLE gate: aceite troca de tela (termo some, form aparece)
 document.querySelectorAll('input[name=tcle]').forEach(r=>
   r.addEventListener('change',()=>{
     const aceito=r.value==='aceito';
+    document.getElementById('tcleSec').hidden=aceito;
     document.getElementById('resto').hidden=!aceito;
     document.getElementById('decline').style.display=aceito?'none':'block';
-    if(aceito)document.getElementById('resto').scrollIntoView({behavior:'smooth'});
+    if(aceito)window.scrollTo({top:0,behavior:'smooth'});
   }));
 
 let PAIR=null,cur='A';
