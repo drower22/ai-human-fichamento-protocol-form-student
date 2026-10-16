@@ -162,7 +162,8 @@
   Escreva em português, com suas palavras. Toda afirmação sobre o artigo leva a referência
   da linha entre parênteses, no formato <b>(p.N Lnnn)</b> — ex.: (p.5 L165) ou um intervalo
   (p.5 L165-170). Trabalhe sozinho, sem IA e sem consultar colegas. Ao final, o formulário
-  gera um arquivo .json para você enviar por e-mail à coordenação.</p>
+  Ao final, o botão <b>Enviar</b> manda seu fichamento direto para a coordenação
+  (se preferir, você também pode baixar o .json e enviar por e-mail).</p>
 </header>
 
 <section>
@@ -301,7 +302,8 @@ e, idealmente, o trecho literal.</p>
   <textarea name="r3" class="short"></textarea>
 </section>
 
-<button type="submit">Baixar meu fichamento (.json)</button>
+<button type="submit">Enviar meu fichamento</button>
+<button type="button" class="addbtn" id="dlBtn" style="margin-top:12px;width:100%">Prefiro baixar o .json e enviar por e-mail</button>
 </div><!-- /resto -->
 </form>
 </div>
@@ -425,7 +427,11 @@ const parseEv=t=>{const refs=[...(t.match(/p\.\d+(?:-\d+)?(?:[\/ ]L\d+(?:-\d+)?)
     .replace(/[()\[\];,\-—]/g,' ').replace(/\s+/g,' ').trim();
   return{refs,quote};};
 
-document.getElementById('f').addEventListener('submit',e=>{
+let forceDl=false;
+document.getElementById('dlBtn').onclick=()=>{forceDl=true;
+  document.getElementById('f').requestSubmit();};
+
+document.getElementById('f').addEventListener('submit',async e=>{
   e.preventDefault();
   const errs=[];
   const need=(v,label)=>{if(!v)errs.push('• '+label+' está vazio.');};
@@ -493,7 +499,7 @@ document.getElementById('f').addEventListener('submit',e=>{
 
   const ebox=document.getElementById('errors'),okb=document.getElementById('ok');
   if(errs.length){
-    ebox.textContent='Corrija antes de baixar:\n'+errs.join('\n');
+    ebox.textContent='Corrija antes de enviar:\n'+errs.join('\n');
     ebox.style.display='block';okb.style.display='none';
     window.scrollTo({top:0,behavior:'smooth'});return;
   }
@@ -515,12 +521,30 @@ document.getElementById('f').addEventListener('submit',e=>{
     self_assessment:sa,
     reflection_log:{q1:g('r1'),q2:g('r2'),q3:g('r3')}
   };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`${payload.participant_id}_${payload.article_id}.json`;
-  a.click();
-  okb.textContent=`Arquivo ${a.download} baixado. Agora envie-o EM ANEXO por e-mail à coordenação.`;
+  const fname=`${payload.participant_id}_${payload.article_id}.json`;
+  const jtxt=JSON.stringify(payload,null,2);
+  const baixar=()=>{const blob=new Blob([jtxt],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=fname;a.click();};
+
+  if(!forceDl){
+    try{
+      const r=await fetch('/api/send',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({filename:fname,json:jtxt})});
+      if(!r.ok)throw 0;
+      okb.textContent=`Fichamento ${fname} enviado com sucesso. Obrigado pela participação!`;
+      okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }catch{
+      baixar();
+      okb.textContent=`O envio automático falhou. Baixamos o arquivo ${fname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
+      okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+  }
+  forceDl=false;baixar();
+  okb.textContent=`Arquivo ${fname} baixado. Envie-o EM ANEXO por e-mail à coordenação.`;
   okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
 });
 </script>
