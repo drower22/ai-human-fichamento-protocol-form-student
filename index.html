@@ -564,7 +564,9 @@ document.getElementById('f').addEventListener('submit',async e=>{
     window.scrollTo({top:0,behavior:'smooth'});
   }catch{
     baixar();
-    okb.textContent=`O envio automático falhou. Baixamos o arquivo ${fname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
+    okb.textContent=location.protocol==='file:'
+      ?`Você está testando o arquivo local — o envio só funciona no link publicado. Baixamos ${fname} para conferir o conteúdo.`
+      :`O envio automático falhou. Baixamos o arquivo ${fname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
     okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
   }
 });
