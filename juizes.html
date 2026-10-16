@@ -68,6 +68,12 @@
   .fbody ul{list-style:disc;padding-left:22px}
   .fbody .refs{font-size:13px;color:var(--slate)}
   .panelT{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:6px}
+  .tcle{border:1px solid var(--line);border-radius:12px;background:#f8fafc;
+    padding:20px 24px;max-height:340px;overflow-y:auto;font-size:15px;
+    line-height:1.65;color:var(--ink);margin:14px 0}
+  .tcle h3{font-size:15px;color:var(--navy);margin:18px 0 6px}
+  .tcle h3:first-child{margin-top:0}
+  .tcle p{margin:0 0 10px}
   .pairinfo{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;
     padding:16px 20px;margin-bottom:20px}
   .pairinfo .t{font-size:19px;font-weight:700;color:var(--navy);line-height:1.35}
@@ -100,6 +106,81 @@
 
 <form id="f" novalidate>
 
+<section>
+  <h2>1. Termo de Consentimento Livre e Esclarecido</h2>
+  <p class="desc">Leia o termo abaixo por completo antes de decidir. A avaliação só
+  será liberada depois da sua resposta.</p>
+
+  <div class="tcle">
+  <h3>Identificação do projeto e do responsável</h3>
+  <p><b>Título da pesquisa:</b> Protocolo de validação iterativa IA–humano para a
+  produção de fichamentos de revisão de literatura.<br>
+  <b>Pesquisador responsável:</b> coordenação do grupo de pesquisa (contato
+  informado pelo professor no momento do convite).<br>
+  <b>Instituição:</b> Universidade Federal do Paraná (UFPR).</p>
+
+  <h3>Convite e justificativa</h3>
+  <p>Você está sendo convidado(a) a participar de um estudo que desenvolve e valida
+  um protocolo de produção de fichamentos de literatura científica, comparando
+  fichamentos elaborados por estudantes e por inteligência artificial. A pesquisa
+  busca tornar o trabalho mecânico de fichamento mais confiável e auditável,
+  liberando tempo do pesquisador para reflexão e análise teórica.</p>
+
+  <h3>O que a sua participação envolve</h3>
+  <p>Avaliar pares de fichamentos do mesmo artigo de forma cega — sem saber qual
+  foi produzido por estudante e qual por IA — atribuindo notas por seção,
+  classificando eventuais erros e respondendo a perguntas comparativas.</p>
+
+  <h3>Critério de seleção</h3>
+  <p>Você foi convidado(a) por integrar o grupo de juízes do estudo, indicado pela
+  coordenação pela experiência em revisão de literatura na área.</p>
+
+  <h3>Desconfortos e riscos</h3>
+  <p>Não há riscos previstos além do tempo dedicado às avaliações. Você pode
+  interromper a atividade a qualquer momento.</p>
+
+  <h3>Benefícios</h3>
+  <p>Não há benefício financeiro. O benefício é contribuir para um protocolo
+  público e replicável de revisão de literatura e para a formação dos estudantes
+  participantes.</p>
+
+  <h3>Despesas e ressarcimento</h3>
+  <p>A participação não envolve custos para você e não há remuneração prevista.
+  O formulário funciona no seu navegador e nenhum dado é enviado automaticamente
+  a nenhum servidor até o envio final.</p>
+
+  <h3>Sigilo, anonimato e proteção de dados</h3>
+  <p>Suas avaliações são identificadas apenas pelo seu código (J1, J2…). Os
+  fichamentos que você avalia chegam sem identificação da fonte, e o mapeamento
+  A/B fica restrito à coordenação. Resultados publicados serão agregados e
+  anonimizados, conforme a Lei Geral de Proteção de Dados (LGPD, Lei nº
+  13.709/2018).</p>
+
+  <h3>Voluntariedade e direito de desistência</h3>
+  <p>Participar é totalmente voluntário. Você pode recusar-se agora, desistir a
+  qualquer momento e solicitar a exclusão das suas avaliações, sem justificativa
+  e sem qualquer prejuízo.</p>
+
+  <h3>Dúvidas</h3>
+  <p>Em caso de dúvidas sobre a pesquisa, fale com a coordenação antes de enviar.
+  Este estudo segue as orientações éticas da Resolução CNS nº 510/2016 para
+  pesquisas em ciências humanas e sociais.</p>
+  </div>
+
+  <p style="font-size:15px;margin:14px 0 8px"><b>Declaração:</b> declaro que li e
+  compreendi as informações acima, que tive oportunidade de esclarecer dúvidas e
+  que minha decisão de participar é livre e esclarecida.</p>
+  <div class="radios" style="font-size:16px">
+    <label><input type="radio" name="tcle" value="aceito"> <b>Li e aceito participar</b></label>
+    <label><input type="radio" name="tcle" value="nao_aceito"> Não aceito participar</label>
+  </div>
+  <p id="decline" style="display:none;margin-top:14px;font-size:15px;color:var(--slate)">
+    Sem problema — obrigado pela atenção. Você pode fechar esta página.
+    Se mudar de ideia, marque "Li e aceito participar".</p>
+</section>
+
+<div id="resto" hidden>
+
 <header>
   <h1>Avaliação de Fichamentos</h1>
   <p>Você vai avaliar <b>dois fichamentos do mesmo artigo</b>, rotulados <b>A</b> e <b>B</b>,
@@ -109,7 +190,7 @@
 </header>
 
 <section>
-  <h2>1. Identificação</h2>
+  <h2>2. Identificação</h2>
   <div class="row3">
     <div><label class="q">Juiz</label>
       <select name="judge_id"><option value="">—</option>
@@ -134,7 +215,7 @@
 <div id="avaliacao" hidden>
 
 <section>
-  <h2>2. Avaliação</h2>
+  <h2>3. Avaliação</h2>
   <p class="desc">Alterne entre A e B no painel da esquerda e dê as notas do fichamento
   visível na direita. BARS 1–7: âncoras em 1, 4 e 7; as notas intermediárias interpolam.</p>
   <div class="pairinfo" id="pairinfo"></div>
@@ -172,7 +253,7 @@
 </section>
 
 <section>
-  <h2>3. Comparativo</h2>
+  <h2>4. Comparativo</h2>
   <label class="q">Se você fosse usar um destes fichamentos na sua revisão de literatura,
     qual usaria?<small>considere fidelidade, completude e utilidade</small></label>
   <div class="radios" style="font-size:16px">
@@ -188,6 +269,7 @@
 
 <div class="submit-row"><button type="submit">Enviar avaliação</button></div>
 </div><!-- /avaliacao -->
+</div><!-- /resto -->
 </form>
 
 <div id="done" hidden>
@@ -290,6 +372,15 @@ function renderFich(o){
   </div>`;
 }
 
+// TCLE gate: resto do form só aparece após aceite
+document.querySelectorAll('input[name=tcle]').forEach(r=>
+  r.addEventListener('change',()=>{
+    const aceito=r.value==='aceito';
+    document.getElementById('resto').hidden=!aceito;
+    document.getElementById('decline').style.display=aceito?'none':'block';
+    if(aceito)document.getElementById('resto').scrollIntoView({behavior:'smooth'});
+  }));
+
 let PAIR=null,cur='A';
 const showTab=k=>{cur=k;
   document.getElementById('tabA').classList.toggle('on',k==='A');
@@ -367,6 +458,8 @@ document.getElementById('f').addEventListener('submit',async e=>{
   e.preventDefault();
   const errs=[];
   const need=(v,label)=>{if(!v)errs.push('• '+label+' está vazio.');};
+  const tcle=document.querySelector('input[name=tcle]:checked');
+  if(!tcle||tcle.value!=='aceito')errs.push('• Termo de consentimento: é preciso aceitar para avaliar.');
   need(g('judge_id'),'Juiz');need(g('article_id'),'Par (artigo)');
   if(!PAIR)errs.push('• Carregue o par antes de enviar (botão "Carregar par").');
   const sa={},sb={};
@@ -391,6 +484,7 @@ document.getElementById('f').addEventListener('submit',async e=>{
 
   const payload={
     kind:'evaluation',judge_id:g('judge_id'),round:+g('round'),article_id:g('article_id'),
+    consent:'aceito',
     scores:{A:sa,B:sb},
     qualitative:{A:{question_would_ask:g('qa_A'),missing:g('miss_A')},
                  B:{question_would_ask:g('qa_B'),missing:g('miss_B')},
