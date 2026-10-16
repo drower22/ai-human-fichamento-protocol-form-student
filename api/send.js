@@ -2,7 +2,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
   try {
     const { filename, json } = req.body ?? {};
-    if (typeof filename !== 'string' || !/^S\d{2}_(PILOTO|A\d{2})\.json$/.test(filename))
+    if (typeof filename !== 'string' ||
+        !/^(S\d{2}_(PILOTO|A\d{2})|E-R\d+-(PILOTO|A\d{2})-J\d)\.json$/.test(filename))
       return res.status(400).json({ error: 'invalid filename' });
     if (typeof json !== 'string' || json.length > 200000)
       return res.status(400).json({ error: 'invalid payload' });

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação de Fichamentos</title>
+<style>
+  :root{--blue:#2563eb;--navy:#1e3a5f;--slate:#475569;--ink:#1e293b;
+    --bg:#f1f5f9;--card:#fff;--line:#cbd5e1;--soft:#e2e8f0;--err:#b91c1c}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);font-family:"Segoe UI",system-ui,sans-serif;
+    color:var(--ink);line-height:1.5}
+  .wrap{max-width:1400px;margin:0 auto;padding:40px 32px 120px}
+  header{background:var(--navy);color:#fff;border-radius:14px;padding:30px 34px;margin-bottom:26px}
+  header h1{font-size:30px}
+  header p{font-size:16px;color:#cbd5e1;margin-top:8px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:28px 30px;margin-bottom:22px}
+  section h2{font-size:22px;color:var(--navy);margin-bottom:6px}
+  section .desc{font-size:15px;color:var(--slate);margin-bottom:18px;white-space:pre-line}
+  label.q{display:block;font-size:16px;font-weight:600;color:var(--navy);margin:18px 0 6px}
+  label.q small{font-weight:400;color:var(--slate);display:block;margin-top:2px}
+  input[type=text],input[type=number],textarea,select{width:100%;border:1px solid var(--line);
+    border-radius:9px;padding:10px 13px;font-size:15px;font-family:inherit;color:var(--ink)}
+  textarea{min-height:90px;resize:vertical}
+  textarea.short{min-height:60px}
+  input:focus,textarea:focus,select:focus{outline:2px solid #93c5fd;border-color:var(--blue)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end}
+  .radios{display:flex;gap:14px;flex-wrap:wrap}
+  .radios label{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600;
+    padding:6px 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer}
+  .radios input{accent-color:var(--blue)}
+  .radios label:has(input:checked){border-color:var(--blue);background:#eff6ff}
+  .slot{border-left:4px solid var(--blue);padding-left:16px;margin:16px 0}
+  .slot h3{font-size:15px;color:var(--slate);text-transform:uppercase;letter-spacing:.5px}
+  .anch{font-size:13px;color:var(--slate);line-height:1.5;margin:6px 0 10px}
+  .anch b{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;
+    min-width:22px;text-align:center;padding:0 5px;margin-right:6px}
+  button{background:var(--blue);color:#fff;border:none;border-radius:10px;
+    font-size:16px;font-weight:600;padding:12px 30px;cursor:pointer}
+  button:hover{background:var(--navy)}
+  .submit-row{text-align:right}
+  .addbtn{background:#fff;color:var(--blue);border:1.5px solid var(--blue);
+    border-radius:10px;font-size:15px;font-weight:600;padding:11px 22px;
+    cursor:pointer;width:auto;margin-top:6px}
+  .addbtn:hover{background:#eff6ff}
+  .errors{background:#fef2f2;border:1px solid #fecaca;color:var(--err);border-radius:10px;
+    padding:16px 20px;font-size:15px;margin-bottom:18px;display:none;white-space:pre-line}
+  .ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:10px;
+    padding:16px 20px;font-size:15px;margin-bottom:18px;display:none}
+  .warndemo{background:#fef9c3;border:1px solid #fde047;color:#854d0e;border-radius:10px;
+    padding:12px 18px;font-size:14px;font-weight:600;margin-bottom:18px;display:none}
+  /* layout lado a lado: fichamento a esquerda, avaliacao a direita */
+  .cols{display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:start}
+  @media(max-width:1000px){.cols{grid-template-columns:1fr}}
+  .viewer{position:sticky;top:16px;background:#f8fafc;border:1px solid var(--line);
+    border-radius:12px;max-height:86vh;overflow:auto}
+  .tabbar{display:flex;gap:8px;padding:14px 16px 0;position:sticky;top:0;
+    background:#f8fafc;z-index:2;padding-bottom:12px;border-bottom:1px solid var(--soft)}
+  .tab{flex:1;background:#fff;color:var(--navy);border:1.5px solid var(--line);
+    border-radius:10px;font-size:16px;font-weight:700;padding:10px;cursor:pointer}
+  .tab.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .fbody{padding:18px 22px 24px}
+  .fbody h4{font-size:13px;color:var(--slate);text-transform:uppercase;
+    letter-spacing:.6px;margin:18px 0 5px}
+  .fbody p,.fbody li{font-size:15px;color:var(--ink);line-height:1.65}
+  .fbody ul{list-style:disc;padding-left:22px}
+  .fbody .refs{font-size:13px;color:var(--slate)}
+  .panelT{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:6px}
+  .pairinfo{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;
+    padding:16px 20px;margin-bottom:20px}
+  .pairinfo .t{font-size:19px;font-weight:700;color:var(--navy);line-height:1.35}
+  .pairinfo .a{font-size:15px;color:var(--slate);margin-top:4px}
+  details.errd{margin-top:10px}
+  details.errd summary{cursor:pointer;font-size:12.5px;color:var(--slate);
+    font-weight:600;letter-spacing:.3px;list-style:none;user-select:none}
+  details.errd summary::before{content:"▸ ";color:var(--blue)}
+  details.errd[open] summary::before{content:"▾ "}
+  .echips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .echips label{display:inline-flex;align-items:center;gap:5px;font-size:12px;
+    font-weight:600;color:var(--slate);padding:4px 10px;border:1px solid var(--line);
+    border-radius:999px;cursor:pointer;background:#fff}
+  .echips input{accent-color:var(--blue);width:12px;height:12px;margin:0}
+  .echips label:has(input:checked){border-color:var(--err);color:var(--err);
+    background:#fef2f2}
+  .done{text-align:center;padding:80px 20px}
+  .done h2{font-size:30px;color:var(--navy);margin:18px 0 10px}
+  .done p{font-size:17px;color:var(--slate);line-height:1.6}
+  .done .check{width:64px;height:64px;border-radius:50%;background:var(--blue);
+    display:inline-flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="errors" id="errors"></div>
+<div class="ok" id="ok"></div>
+<div class="warndemo" id="demo">MODO DEMONSTRAÇÃO — este par contém conteúdo de exemplo, não os fichamentos reais.</div>
+
+<form id="f" novalidate>
+
+<header>
+  <h1>Avaliação de Fichamentos</h1>
+  <p>Você vai avaliar <b>dois fichamentos do mesmo artigo</b>, rotulados <b>A</b> e <b>B</b>,
+  sem saber qual foi produzido por estudante e qual por IA. Use as abas para alternar
+  entre os dois enquanto atribui as notas BARS de 1 a 7 em cada seção.
+  Verifique à vontade as referências (p.N Lnnn) no PDF do artigo.</p>
+</header>
+
+<section>
+  <h2>1. Identificação</h2>
+  <div class="row3">
+    <div><label class="q">Juiz</label>
+      <select name="judge_id"><option value="">—</option>
+      <option>J1</option><option>J2</option><option>J3</option><option>J4</option></select></div>
+    <div><label class="q">Rodada</label>
+      <select name="round"><option value="0">0 — Piloto</option>
+      <option value="1">1</option><option value="2">2</option></select></div>
+    <div><label class="q">Par (artigo)</label>
+      <select name="article_id"><option value="">—</option><option>PILOTO</option>
+      <option>A01</option><option>A02</option><option>A03</option><option>A04</option>
+      <option>A05</option><option>A06</option><option>A07</option><option>A08</option>
+      <option>A09</option><option>A10</option><option>A11</option><option>A12</option>
+      <option>A13</option><option>A14</option><option>A15</option><option>A16</option>
+      <option>A17</option><option>A18</option><option>A19</option><option>A20</option>
+      <option>A21</option><option>A22</option><option>A23</option><option>A24</option>
+      <option>A25</option><option>A26</option><option>A27</option><option>A28</option>
+      <option>A29</option><option>A30</option><option>A31</option><option>A32</option></select></div>
+  </div>
+  <button type="button" class="addbtn" id="loadBtn" style="margin-top:18px">Carregar par para avaliação</button>
+</section>
+
+<div id="avaliacao" hidden>
+
+<section>
+  <h2>2. Avaliação</h2>
+  <p class="desc">Alterne entre A e B no painel da esquerda e dê as notas do fichamento
+  visível na direita. BARS 1–7: âncoras em 1, 4 e 7; as notas intermediárias interpolam.</p>
+  <div class="pairinfo" id="pairinfo"></div>
+  <div class="cols">
+    <div class="viewer">
+      <div class="tabbar">
+        <button type="button" class="tab on" id="tabA">Fichamento A</button>
+        <button type="button" class="tab" id="tabB">Fichamento B</button>
+      </div>
+      <div id="viewerBody"></div>
+    </div>
+    <div>
+      <div id="panelA">
+        <p class="panelT">Notas do Fichamento A</p>
+        <div id="scoreA"></div>
+        <label class="q">O que você questionaria ou corrigiria no Fichamento A?</label>
+        <textarea name="qa_A" class="short"></textarea>
+        <label class="q">O que faltou no Fichamento A?</label>
+        <textarea name="miss_A" class="short"></textarea>
+        <label class="q">Nota sobre os erros<small>opcional — descreva os erros marcados, se "outro" ou se quiser detalhar</small></label>
+        <textarea name="enote_A" class="short"></textarea>
+      </div>
+      <div id="panelB" hidden>
+        <p class="panelT">Notas do Fichamento B</p>
+        <div id="scoreB"></div>
+        <label class="q">O que você questionaria ou corrigiria no Fichamento B?</label>
+        <textarea name="qa_B" class="short"></textarea>
+        <label class="q">O que faltou no Fichamento B?</label>
+        <textarea name="miss_B" class="short"></textarea>
+        <label class="q">Nota sobre os erros<small>opcional — descreva os erros marcados, se "outro" ou se quiser detalhar</small></label>
+        <textarea name="enote_B" class="short"></textarea>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>3. Comparativo</h2>
+  <label class="q">Se você fosse usar um destes fichamentos na sua revisão de literatura,
+    qual usaria?<small>considere fidelidade, completude e utilidade</small></label>
+  <div class="radios" style="font-size:16px">
+    <label><input type="radio" name="pref" value="A"> <b>Fichamento A</b></label>
+    <label><input type="radio" name="pref" value="B"> <b>Fichamento B</b></label>
+    <label><input type="radio" name="pref" value="empate"> Empate técnico</label>
+  </div>
+  <label class="q">Por quê?</label>
+  <textarea name="pref_why"></textarea>
+  <label class="q">Observações gerais<small>opcional — impressões sobre o par, suspeitas de origem, etc.</small></label>
+  <textarea name="notes" class="short"></textarea>
+</section>
+
+<div class="submit-row"><button type="submit">Enviar avaliação</button></div>
+</div><!-- /avaliacao -->
+</form>
+
+<div id="done" hidden>
+  <div class="done">
+    <span class="check"><svg viewBox="0 0 24 24" style="width:34px;height:34px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M20 6L9 17l-5-5"/></svg></span>
+    <h2>Avaliação enviada!</h2>
+    <p id="doneMsg"></p>
+    <p>Obrigado — você já pode fechar esta página.</p>
+  </div>
+</div>
+
+</div>
+<script>
+const SECS=['executive_summary','research_question','theories','key_concepts',
+  'methodology','main_findings','contribution'];
+const PT={executive_summary:'Resumo executivo',research_question:'Questão de pesquisa',
+  theories:'Teorias',key_concepts:'Conceitos-chave',methodology:'Metodologia',
+  main_findings:'Achados principais',contribution:'Contribuição'};
+const ANCHORS={
+executive_summary:{a1:'Ausente, genérico a ponto de valer para qualquer artigo, ou contradiz o artigo',
+  a4:'Cobre problema, método e resultado centrais, mas perde nuances ou omite partes importantes',
+  a7:'Síntese fiel e completa (~300 palavras); quem lê entende o artigo sem abrir o PDF'},
+research_question:{a1:'Ausente ou errada (não é a pergunta do artigo)',
+  a4:'Correta mas imprecisa: ampla demais, ou captura só parte',
+  a7:'Formula precisamente a pergunta do artigo, no escopo correto'},
+theories:{a1:'Teorias centrais ausentes ou inventadas',
+  a4:'Lista as principais mas confunde papel (lente vs. citação periférica) ou omite tradição relevante',
+  a7:'Identifica todas as teorias centrais, sua tradição e o papel de cada uma; zero invenção'},
+key_concepts:{a1:'Conceitos errados, inventados ou definições incorretas',
+  a4:'Conceitos corretos, mas definições genéricas ou escolha discutível',
+  a7:'Construtos centrais com definições fiéis ao uso no artigo'},
+methodology:{a1:'Design/método errados ou inventados',
+  a4:'Design correto mas omite informação essencial (N, setor, período, técnicas)',
+  a7:'Design, N, setor, período e técnicas corretos e completos'},
+main_findings:{a1:'Achados inventados, invertidos ou que o artigo não sustenta',
+  a4:'Achados corretos mas incompletos, ou sem distinguir evidência de especulação',
+  a7:'Captura todos os achados/proposições centrais, distinguindo empírico de proposição/modelo'},
+contribution:{a1:'Ausente ou não corresponde ao que o artigo reivindica/entrega',
+  a4:'Identifica contribuição real mas superficial (repete abstract) ou infla',
+  a7:'Articula avanço teórico e utilidade prática de forma fiel e calibrada'}};
+
+const VL={uses:'USA',discusses:'DISCUTE',does_not_use:'NÃO USA'};
+const TL={empirical:'Empírico',proposition:'Proposição',model:'Modelo'};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const DEMO={demo:true,article_id:'PILOTO',round:0,
+title:'Entre o Planejamento Estratégico Formal e Informal: um Estudo de Caso Exploratório sobre a Prática de Estratégia nas Organizações',
+authors:'Souza, C. M. L.',year:2011,venue:'RAC 15(5), 855-876',
+A:{executive_summary:'[MOCK] O artigo examina como o planejamento estratégico formal e o informal coexistem em uma organização brasileira de serviços. Com base em estudo de caso único, os autores mostram que práticas informais não eliminam o formal, mas atuam de forma complementar, criando um momentum burocrático que sustenta a trajetória estratégica. A contribuição é empírica e teórica: refina a distinção entre estratégia deliberada e emergente e sugere que o formal serve como âncora simbólica para práticas flexíveis (p.5 L165-170).',
+ research_question:'[MOCK] Como o planejamento estratégico formal e o informal interagem na formação da estratégia organizacional?',
+ theory_verdicts:[
+  {item_id:'T3',name:'Estratégia como prática (strategy-as-practice)',verdict:'uses',source_refs:['p.5 L165-170'],quote:'[mock] trecho literal do artigo'},
+  {item_id:'T6',name:'Teoria da estruturação',verdict:'discusses',source_refs:['p.8 L302'],quote:'[mock] trecho literal'},
+  {item_id:'T11',name:'Momentum burocrático',verdict:'uses',source_refs:['p.9 L340'],quote:'[mock] trecho literal'}],
+ theories:[],
+ key_concepts:[
+  {concept:'Planejamento formal',definition:'Sistema estruturado de definição de objetivos e meios, com rituais e documentos (p.3 L88).',quote:'',source_refs:['p.3 L88']},
+  {concept:'Planejamento informal',definition:'Práticas não codificadas de decisão que operam em paralelo ao sistema formal (p.4 L120).',quote:'',source_refs:['p.4 L120']}],
+ methodology:{study_type:'empírico',design:'estudo de caso único',sample_type:'empresa de serviços',sample_size:12,sector:'serviços',period:'2008-2009',methods:['entrevistas','análise de conteúdo'],analysis_note:'[MOCK] Triangulação de entrevistas e documentos.',source_refs:['p.6 L200']},
+ main_findings:[
+  {finding:'Formal e informal coexistem de forma complementar, não excludente.',type:'empirical',quote:'',source_refs:['p.9 L340']},
+  {finding:'O momentum burocrático mantém a trajetória mesmo quando a prática diverge do plano.',type:'proposition',quote:'',source_refs:['p.10 L380']}],
+ contribution:{theoretical:'[MOCK] Refina a teoria da estruturação aplicada à estratégia.',practical:'[MOCK] Mostra a gestores que formal e informal podem ser geridos em conjunto.'}},
+B:{executive_summary:'[MOCK] Este fichamento descreve o artigo como um estudo sobre planejamento estratégico em empresas, destacando o papel das escolas de estratégia e da visão de conteúdo. Afirma que o artigo propõe um modelo novo de gestão estratégica integrada, com validação em survey de médio porte, e conclui recomendando a adoção ampla do modelo por empresas brasileiras.',
+ research_question:'[MOCK] Qual o melhor modelo de planejamento estratégico para empresas?',
+ theory_verdicts:[
+  {item_id:'T4',name:'Abordagem de conteúdo da estratégia',verdict:'uses',source_refs:['p.2 L45'],quote:'[mock] trecho literal'},
+  {item_id:'T13',name:'Escola de aprendizagem (learning school)',verdict:'discusses',source_refs:[],quote:''}],
+ theories:[{name:'Teoria da agência',tradition:'',role:'mencionada',source_refs:[]}],
+ key_concepts:[
+  {concept:'Estratégia deliberada',definition:'Estratégia planejada e realizada conforme o plano (p.5 L150).',quote:'',source_refs:['p.5 L150']}],
+ methodology:{study_type:'empírico',design:'survey quantitativo',sample_type:'gerentes',sample_size:87,sector:'indústria',period:'2007',methods:['questionário','regressão'],analysis_note:'[MOCK] nota de análise',source_refs:[]},
+ main_findings:[
+  {finding:'O planejamento formal aumenta o desempenho das empresas.',type:'empirical',quote:'',source_refs:[]},
+  {finding:'Propõe-se um modelo integrado de gestão estratégica.',type:'model',quote:'',source_refs:[]}],
+ contribution:{theoretical:'[MOCK] Propõe novo modelo de gestão estratégica.',practical:'[MOCK] Recomenda a adoção do modelo por empresas.'}}};
+
+function renderFich(o){
+  const pos=(o.theory_verdicts||[]).filter(t=>t.verdict&&t.verdict!=='does_not_use');
+  const refs=r=>(r&&r.length)?`<span class="refs"> [${r.map(esc).join('; ')}]</span>`:'';
+  return `
+  <div class="fbody">
+    <h4>Resumo executivo</h4><p>${esc(o.executive_summary)}</p>
+    <h4>Questão de pesquisa</h4><p>${esc(o.research_question)}</p>
+    <h4>Teorias</h4>
+    <ul>${pos.map(t=>`<li><b>${esc(t.name||t.item_id)}</b> — ${VL[t.verdict]||t.verdict}${refs(t.source_refs)}${t.quote?`<br><span class="refs">${esc(t.quote)}</span>`:''}</li>`).join('')}
+    ${(o.theories||[]).map(t=>`<li><b>${esc(t.name)}</b> (outra)${refs(t.source_refs)}</li>`).join('')||''}</ul>
+    <h4>Conceitos-chave</h4>
+    <ul>${(o.key_concepts||[]).map(c=>`<li><b>${esc(c.concept)}:</b> ${esc(c.definition)}${refs(c.source_refs)}</li>`).join('')}</ul>
+    <h4>Metodologia</h4>
+    <p>${[o.methodology?.design,o.methodology?.study_type,o.methodology?.sample_type&&'Amostra: '+o.methodology.sample_type,
+      o.methodology?.sample_size!=null&&'N='+o.methodology.sample_size,o.methodology?.sector&&'Setor: '+o.methodology.sector,
+      o.methodology?.period&&'Período: '+o.methodology.period,(o.methodology?.methods||[]).length&&'Métodos: '+o.methodology.methods.join(', '),
+      o.methodology?.analysis_note].filter(Boolean).map(esc).join('. ')||'—'}${refs(o.methodology?.source_refs)}</p>
+    <h4>Achados principais</h4>
+    <ul>${(o.main_findings||[]).map(f=>`<li>${esc(f.finding)} <span class="refs">[${TL[f.type]||f.type}]</span>${refs(f.source_refs)}</li>`).join('')}</ul>
+    <h4>Contribuição</h4>
+    <p><b>Teórica:</b> ${esc(o.contribution?.theoretical||'—')}<br>
+    <b>Prática:</b> ${esc(o.contribution?.practical||'—')}</p>
+  </div>`;
+}
+
+let PAIR=null,cur='A';
+const showTab=k=>{cur=k;
+  document.getElementById('tabA').classList.toggle('on',k==='A');
+  document.getElementById('tabB').classList.toggle('on',k==='B');
+  document.getElementById('viewerBody').innerHTML=PAIR?renderFich(PAIR[k]):'';
+  document.getElementById('panelA').hidden=k!=='A';
+  document.getElementById('panelB').hidden=k!=='B';
+  document.querySelector('.viewer').scrollTop=0;};
+document.getElementById('tabA').onclick=()=>showTab('A');
+document.getElementById('tabB').onclick=()=>showTab('B');
+
+const g=n=>document.querySelector(`[name=${n}]`)?.value.trim()||'';
+
+document.getElementById('loadBtn').onclick=async()=>{
+  const errs=[];
+  if(!g('judge_id'))errs.push('• Escolha seu identificador de juiz.');
+  if(!g('article_id'))errs.push('• Escolha o par (artigo).');
+  const eb=document.getElementById('errors');
+  if(errs.length){eb.textContent=errs.join('\n');eb.style.display='block';return;}
+  eb.style.display='none';
+  const art=g('article_id');
+  try{
+    const r=await fetch(`pairs/${art}.json`);
+    if(!r.ok)throw 0;
+    PAIR=await r.json();
+  }catch{
+    PAIR=art==='PILOTO'?DEMO:null;
+    if(!PAIR){
+      eb.textContent=`Pacote do par "${art}" não encontrado. Confira o artigo ou fale com a coordenação.`;
+      eb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});return;}
+  }
+  document.getElementById('demo').style.display=PAIR.demo?'block':'none';
+  document.getElementById('pairinfo').innerHTML=
+    `<div class="t">${esc(PAIR.title||PAIR.article_id)}</div>
+     <div class="a">${[PAIR.authors,PAIR.year,PAIR.venue].filter(Boolean).map(esc).join(' · ')}</div>`;
+  showTab('A');
+  document.getElementById('avaliacao').hidden=false;
+  document.getElementById('avaliacao').scrollIntoView({behavior:'smooth'});
+};
+
+// taxonomia de erros por seção (rubric.md) — chips compactos, colapsados por padrão
+const ERRS=[
+ ['hallucination','Invenção','conteúdo fabricado, inexistente no artigo'],
+ ['omission','Omissão','elemento central do artigo ausente'],
+ ['misinterpretation','Interp. errada','elemento real interpretado incorretamente'],
+ ['misattribution','Atribuição errada','teoria/autor/variável trocados'],
+ ['terminology','Terminologia','termo técnico usado ou traduzido incorretamente'],
+ ['extrapolation','Extrapolação','afirma além do que o artigo sustenta'],
+ ['invalid_source_ref','Ref. inválida','(p.N Lnnn) não existe ou não sustenta a afirmação'],
+ ['other','Outro','descreva na nota de erros abaixo']];
+const scoreBlock=k=>SECS.map(s=>`
+  <div class="slot"><h3>${PT[s]}</h3>
+    <p class="anch"><b>1</b> ${ANCHORS[s].a1}<br><b>4</b> ${ANCHORS[s].a4}<br><b>7</b> ${ANCHORS[s].a7}</p>
+    <div class="radios">${[1,2,3,4,5,6,7].map(n=>
+      `<label><input type="radio" name="s${k}_${s}" value="${n}"> ${n}</label>`).join('')}
+    </div>
+    <details class="errd"><summary>Erros nesta seção (opcional)</summary>
+      <div class="echips">${ERRS.map(([c,l,d])=>`
+        <label title="${esc(d)}"><input type="checkbox" name="e_${k}_${s}" value="${c}">${l}</label>`).join('')}
+      </div>
+      <input type="text" name="eo_${k}_${s}" class="eon" placeholder="Qual erro? descreva brevemente" style="display:none;margin-top:8px">
+    </details>
+  </div>`).join('');
+document.getElementById('scoreA').innerHTML=scoreBlock('A');
+document.getElementById('scoreB').innerHTML=scoreBlock('B');
+// "outro" abre campo de texto junto aos chips
+document.querySelectorAll('#scoreA,#scoreB').forEach(sc=>sc.addEventListener('change',e=>{
+  if(e.target.value!=='other')return;
+  const inp=e.target.closest('.errd').querySelector('.eon');
+  inp.style.display=e.target.checked?'block':'none';
+  if(e.target.checked)inp.focus();
+}));
+
+document.getElementById('f').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const errs=[];
+  const need=(v,label)=>{if(!v)errs.push('• '+label+' está vazio.');};
+  need(g('judge_id'),'Juiz');need(g('article_id'),'Par (artigo)');
+  if(!PAIR)errs.push('• Carregue o par antes de enviar (botão "Carregar par").');
+  const sa={},sb={};
+  SECS.forEach(s=>{
+    const a=document.querySelector(`input[name=sA_${s}]:checked`);
+    if(!a)errs.push(`• Fichamento A: nota de "${PT[s]}".`);else sa[s]=+a.value;
+    const b=document.querySelector(`input[name=sB_${s}]:checked`);
+    if(!b)errs.push(`• Fichamento B: nota de "${PT[s]}".`);else sb[s]=+b.value;});
+  const pref=document.querySelector('input[name=pref]:checked');
+  if(!pref)errs.push('• Comparativo: escolha qual fichamento usaria (ou empate).');
+  need(g('pref_why'),'Por quê (comparativo)');
+  need(g('qa_A'),'Fichamento A: o que questionaria');need(g('miss_A'),'Fichamento A: o que faltou');
+  need(g('qa_B'),'Fichamento B: o que questionaria');need(g('miss_B'),'Fichamento B: o que faltou');
+
+  const ebox=document.getElementById('errors'),okb=document.getElementById('ok');
+  if(errs.length){
+    ebox.textContent='Corrija antes de enviar:\n'+errs.join('\n');
+    ebox.style.display='block';okb.style.display='none';
+    window.scrollTo({top:0,behavior:'smooth'});return;
+  }
+  ebox.style.display='none';
+
+  const payload={
+    kind:'evaluation',judge_id:g('judge_id'),round:+g('round'),article_id:g('article_id'),
+    scores:{A:sa,B:sb},
+    qualitative:{A:{question_would_ask:g('qa_A'),missing:g('miss_A')},
+                 B:{question_would_ask:g('qa_B'),missing:g('miss_B')},
+                 preferred:pref.value,why:g('pref_why')},
+    error_taxonomy:['A','B'].reduce((o,k)=>{
+      const by={};
+      SECS.forEach(s=>{const codes=[...document.querySelectorAll(`input[name=e_${k}_${s}]:checked`)].map(c=>c.value);
+        if(codes.length)by[s]={codes,other_note:g('eo_'+k+'_'+s)};});
+      o[k]={by_section:by,note:g('enote_'+k)};return o;},{}),
+    notes:g('notes')};
+  const fname=`E-R${payload.round}-${payload.article_id}-${payload.judge_id}.json`;
+  const jtxt=JSON.stringify(payload,null,2);
+  const baixar=()=>{const blob=new Blob([jtxt],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=fname;a.click();};
+  try{
+    const r=await fetch('/api/send',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({filename:fname,json:jtxt})});
+    if(!r.ok)throw 0;
+    document.getElementById('f').style.display='none';
+    document.getElementById('doneMsg').textContent=`Recebemos a sua avaliação (${fname}).`;
+    document.getElementById('done').hidden=false;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch{
+    baixar();
+    okb.textContent=`O envio automático falhou. Baixamos o arquivo ${fname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
+    okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{
+  "demo": true,
+  "article_id": "PILOTO",
+  "round": 0,
+  "title": "Entre o Planejamento Estratégico Formal e Informal: um Estudo de Caso Exploratório sobre a Prática de Estratégia nas Organizações",
+  "authors": "Souza, C. M. L.",
+  "year": 2011,
+  "venue": "RAC 15(5), 855-876",
+  "A": {
+    "executive_summary": "[DEMO] Resumo executivo do fichamento A. Texto de exemplo com cerca de 300 palavras cobrindo problema, teoria, metodo, achados e contribuicao do artigo-piloto. Este conteudo sera substituido pelo fichamento real gerado pela coordenacao.",
+    "research_question": "[DEMO] Qual e a pergunta de pesquisa do artigo, segundo o fichamento A?",
+    "theory_verdicts": [
+      {"item_id": "T3", "name": "Estratégia como prática (strategy-as-practice)", "verdict": "uses", "source_refs": ["p.5 L165-170"], "quote": "[demo] trecho literal"},
+      {"item_id": "T6", "name": "Teoria da estruturação", "verdict": "discusses", "source_refs": ["p.8 L302"], "quote": "[demo] trecho literal"}
+    ],
+    "theories": [],
+    "key_concepts": [
+      {"concept": "Planejamento estratégico formal", "definition": "[DEMO] Definicao do conceito conforme uso no artigo (p.3 L88).", "quote": "", "source_refs": ["p.3 L88"]},
+      {"concept": "Planejamento informal", "definition": "[DEMO] Definicao conforme uso no artigo (p.4 L120).", "quote": "", "source_refs": ["p.4 L120"]}
+    ],
+    "methodology": {
+      "study_type": "empírico", "design": "estudo de caso único", "sample_type": "empresa de serviços",
+      "sample_size": 12, "sector": "serviços", "period": "2008-2009",
+      "methods": ["entrevistas", "analise de conteudo"], "analysis_note": "[DEMO] nota de analise",
+      "source_refs": ["p.6 L200"]
+    },
+    "main_findings": [
+      {"finding": "[DEMO] Achado principal do fichamento A.", "type": "empirical", "quote": "", "source_refs": ["p.9 L340"]}
+    ],
+    "contribution": {
+      "theoretical": "[DEMO] contribuicao teorica apontada pelo fichamento A.",
+      "practical": "[DEMO] contribuicao pratica apontada pelo fichamento A."
+    }
+  },
+  "B": {
+    "executive_summary": "[DEMO] Resumo executivo do fichamento B. Conteudo alternativo para o juiz comparar, com tom e profundidade diferentes do fichamento A.",
+    "research_question": "[DEMO] Formulacao alternativa da questao de pesquisa (fichamento B).",
+    "theory_verdicts": [
+      {"item_id": "T4", "name": "Abordagem de conteúdo da estratégia", "verdict": "uses", "source_refs": ["p.2 L45"], "quote": "[demo] trecho literal"},
+      {"item_id": "T5", "name": "Aprendizagem organizacional", "verdict": "discusses", "source_refs": ["p.10 L380"], "quote": "[demo] trecho literal"}
+    ],
+    "theories": [{"name": "Teoria X (extra)", "tradition": "livre", "role": "complementar", "source_refs": ["p.11 L410"]}],
+    "key_concepts": [
+      {"concept": "Estrategia deliberada", "definition": "[DEMO] Definicao conforme o artigo (p.5 L150).", "quote": "", "source_refs": ["p.5 L150"]}
+    ],
+    "methodology": {
+      "study_type": "empírico", "design": "survey", "sample_type": "gerentes",
+      "sample_size": 87, "sector": "indústria", "period": "2007",
+      "methods": ["questionario", "regressao"], "analysis_note": "[DEMO] nota de analise",
+      "source_refs": []
+    },
+    "main_findings": [
+      {"finding": "[DEMO] Achado 1 do fichamento B.", "type": "empirical", "quote": "", "source_refs": []},
+      {"finding": "[DEMO] Achado 2 (proposicao) do fichamento B.", "type": "proposition", "quote": "", "source_refs": []}
+    ],
+    "contribution": {
+      "theoretical": "[DEMO] contribuicao teorica do fichamento B.",
+      "practical": "[DEMO] contribuicao pratica do fichamento B."
+    }
+  }
+}
