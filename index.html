@@ -174,8 +174,7 @@
 <section>
   <h2>2. Identificação</h2>
   <p class="desc">Seus dados pessoais servem apenas para caracterizar a amostra da
-  pesquisa. Eles NÃO aparecem no fichamento que os juízes avaliam — quem avalia vê
-  somente o seu identificador.</p>
+  pesquisa. Eles NÃO aparecem no fichamento que os juízes avaliam.</p>
   <div class="row2">
     <div><label class="q">Nome completo</label><input type="text" name="full_name"></div>
     <div><label class="q">Idade (anos)</label><input type="number" name="age" min="16" max="99"></div>
@@ -188,9 +187,7 @@
       <select name="program"><option value="">—</option><option>Mestrado</option>
       <option>Doutorado</option></select></div>
   </div>
-  <div class="row3">
-    <div><label class="q">Seu identificador<small>o código S que você recebeu da coordenação — se ainda não recebeu, pode deixar em branco</small></label>
-      <select name="participant_id" id="pid"></select></div>
+  <div class="row2">
     <div><label class="q">Artigo</label>
       <input type="text" name="article_id" value="PILOTO" readonly></div>
     <div><label class="q">Tempo total (min)<small>quanto tempo levou no total (ler + fichar); estimativa honesta, não vai aos juízes</small></label>
@@ -334,11 +331,6 @@ document.querySelectorAll('input[name=tcle]').forEach(r=>
     document.getElementById('decline').style.display=aceito?'none':'block';
     if(aceito)window.scrollTo({top:0,behavior:'smooth'});
   }));
-
-// participant select S01..S30
-const pid=document.getElementById('pid');
-pid.innerHTML='<option value="">—</option>'+Array.from({length:30},(_,i)=>
-  `<option>S${String(i+1).padStart(2,'0')}</option>`).join('');
 
 // theories
 const td=document.getElementById('theories');
@@ -531,7 +523,7 @@ document.getElementById('f').addEventListener('submit',async e=>{
   ebox.style.display='none';
 
   const payload={
-    article_id:g('article_id'),participant_id:g('participant_id'),consent:'aceito',
+    article_id:g('article_id'),participant_id:'',consent:'aceito',
     elapsed_minutes:+g('elapsed_minutes'),
     full_name:g('full_name'),age:g('age'),gender:g('gender'),program:g('program'),
     executive_summary:g('executive_summary'),research_question:g('research_question'),
@@ -546,11 +538,10 @@ document.getElementById('f').addEventListener('submit',async e=>{
     self_assessment:sa,
     reflection_log:{q1:g('r1'),q2:g('r2'),q3:g('r3')}
   };
-  // sem código S nesta rodada? identifica pelo nome (slug) no nome do arquivo
+  // piloto: sem código S — o arquivo é identificado pelo nome (slug)
   const slug=g('full_name').normalize('NFD').replace(/[̀-ͯ]/g,'')
     .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);
-  const pid=payload.participant_id||`X_${slug||'sem-nome'}`;
-  const fname=`${pid}_${payload.article_id}.json`;
+  const fname=`X_${slug||'sem-nome'}_${payload.article_id}.json`;
   const jtxt=JSON.stringify(payload,null,2);
   const baixar=()=>{const blob=new Blob([jtxt],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
