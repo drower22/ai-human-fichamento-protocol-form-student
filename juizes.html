@@ -148,7 +148,7 @@
   a nenhum servidor até o envio final.</p>
 
   <h3>Sigilo, anonimato e proteção de dados</h3>
-  <p>Suas avaliações são identificadas apenas pelo seu código (J1, J2…). Os
+  <p>Suas avaliações são identificadas apenas pelo seu código de juiz. Os
   fichamentos que você avalia chegam sem identificação da fonte, e o mapeamento
   A/B fica restrito à coordenação. Resultados publicados serão agregados e
   anonimizados, conforme a Lei Geral de Proteção de Dados (LGPD, Lei nº
@@ -197,7 +197,8 @@
       <input id="judgeLock" hidden disabled style="background:#f8fafc;font-weight:700"></div>
     <div><label class="q">Rodada</label>
       <select name="round"><option value="0">0 — Piloto</option>
-      <option value="1">1</option><option value="2">2</option></select></div>
+      <option value="1">1</option><option value="2">2</option></select>
+      <input id="roundLock" hidden disabled style="background:#f8fafc;font-weight:700"></div>
     <div><label class="q">Par (artigo)</label>
       <select name="article_id"><option value="">—</option><option>PILOTO</option>
       <option>A01</option><option>A02</option><option>A03</option><option>A04</option>
@@ -207,7 +208,8 @@
       <option>A17</option><option>A18</option><option>A19</option><option>A20</option>
       <option>A21</option><option>A22</option><option>A23</option><option>A24</option>
       <option>A25</option><option>A26</option><option>A27</option><option>A28</option>
-      <option>A29</option><option>A30</option><option>A31</option><option>A32</option></select></div>
+      <option>A29</option><option>A30</option><option>A31</option><option>A32</option></select>
+      <input id="artLock" hidden disabled style="background:#f8fafc;font-weight:700"></div>
   </div>
   <button type="button" class="addbtn" id="loadBtn" style="margin-top:18px">Carregar par para avaliação</button>
 </section>
@@ -384,7 +386,14 @@ function renderFich(o){
 const _j=new URLSearchParams(location.search).get('j');
 if(_j&&/^[1-4]$/.test(_j)){
   const sel=q('[name="judge_id"]'),lock=document.getElementById('judgeLock');
-  sel.value='J'+_j;sel.hidden=true;lock.hidden=false;lock.value='J'+_j;
+  sel.value='J'+_j;sel.hidden=true;lock.hidden=false;
+  lock.value='Identificado pelo seu link';   // J# nunca é exibido ao juiz
+  // link do piloto: rodada e par também travados — nada para escolher na lista
+  for(const [nm,val,lid,label] of [['round','0','roundLock','0 — Piloto'],
+                                  ['article_id','PILOTO','artLock','PILOTO']]){
+    const s=q(`[name="${nm}"]`),l=document.getElementById(lid);
+    s.value=val;s.hidden=true;l.hidden=false;l.value=label;
+  }
 }
 
 // TCLE gate: aceite troca de tela (termo some, form aparece)
@@ -419,7 +428,9 @@ document.getElementById('loadBtn').onclick=async()=>{
   eb.style.display='none';
   const art=g('article_id');
   try{
-    const r=await fetch(`pairs/${art}.json`);
+    // versão individual do juiz (A/B embaralhado por juiz), senão o genérico
+    let r=await fetch(`pairs/${art}-${g('judge_id')}.json`);
+    if(!r.ok)r=await fetch(`pairs/${art}.json`);
     if(!r.ok)throw 0;
     PAIR=await r.json();
   }catch{
@@ -512,24 +523,25 @@ document.getElementById('f').addEventListener('submit',async e=>{
       o[k]={by_section:by,note:g('enote_'+k)};return o;},{}),
     notes:g('notes')};
   const fname=`E-R${payload.round}-${payload.article_id}-${payload.judge_id}.json`;
+  const dlname=`E-R${payload.round}-${payload.article_id}-avaliacao.json`; // nome exibido/baixado: sem J#
   const jtxt=JSON.stringify(payload,null,2);
   const baixar=()=>{const blob=new Blob([jtxt],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download=fname;a.click();};
+    a.download=dlname;a.click();};
   try{
     const r=await fetch('/api/send',{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({filename:fname,json:jtxt})});
     if(!r.ok)throw 0;
     document.getElementById('f').style.display='none';
-    document.getElementById('doneMsg').textContent=`Recebemos a sua avaliação (${fname}).`;
+    document.getElementById('doneMsg').textContent=`Recebemos a sua avaliação do par ${payload.article_id}.`;
     document.getElementById('done').hidden=false;
     window.scrollTo({top:0,behavior:'smooth'});
   }catch{
     baixar();
     okb.textContent=location.protocol==='file:'
       ?`Você está testando o arquivo local — o envio só funciona no link publicado. Baixamos ${fname} para conferir o conteúdo.`
-      :`O envio automático falhou. Baixamos o arquivo ${fname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
+      :`O envio automático falhou. Baixamos o arquivo ${dlname} para você — envie-o EM ANEXO por e-mail à coordenação.`;
     okb.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
   }
 });
