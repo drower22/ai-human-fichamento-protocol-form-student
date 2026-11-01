@@ -384,7 +384,8 @@ function renderFich(o){
 
 // link pessoal ?j=<nome>: travado, sem J# — o juiz vê só o próprio nome
 const q=s=>document.querySelector(s);
-const _j=(new URLSearchParams(location.search).get('j')||'').toLowerCase();
+const _j=(new URLSearchParams(location.search).get('j')||'')
+  .normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();  // aceita natália/natalia
 const NAMES={natalia:'Natália',bruno:'Bruno',marcos:'Marcos',gustavo:'Gustavo'};
 if(_j&&(NAMES[_j]||/^[1-4]$/.test(_j))){
   const sel=q('[name="judge_id"]'),lock=document.getElementById('judgeLock');
