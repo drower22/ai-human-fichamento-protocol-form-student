@@ -71,6 +71,9 @@
   .sectxt .refs{font-size:13px;color:var(--slate)}
   .qualblk{background:#f8fafc;border:1px solid var(--line);border-radius:12px;
     padding:18px 22px;margin-top:20px}
+  .steps{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;
+    padding:12px 18px 12px 34px;margin:14px 0;font-size:14px;color:var(--ink)}
+  .steps li{margin:3px 0}
   .panelT{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:6px}
   .tcle{border:1px solid var(--line);border-radius:12px;background:#f8fafc;
     padding:20px 24px;max-height:340px;overflow-y:auto;font-size:15px;
@@ -226,6 +229,13 @@
   à esquerda e a nota à direita — os dois rolam juntos. BARS 1–7: âncoras em 1, 4 e 7;
   as notas intermediárias interpolam.</p>
   <div class="pairinfo" id="pairinfo"></div>
+  <ol class="steps">
+    <li>Leia a seção à esquerda e marque a nota (1–7) à direita.</li>
+    <li>Se encontrar erro, abra <i>Erros nesta seção</i> e marque o tipo.</li>
+    <li>Alterne <b>A | B</b> nas abas e repita para o outro fichamento.</li>
+    <li>No fim de cada fichamento, responda o que questionaria e o que faltou.</li>
+    <li>Com as notas de A e B completas, o <b>Comparativo</b> aparece — escolha e envie.</li>
+  </ol>
   <div class="tabbar">
     <button type="button" class="tab on" id="tabA">Fichamento A</button>
     <button type="button" class="tab" id="tabB">Fichamento B</button>
@@ -254,7 +264,7 @@
   </div>
 </section>
 
-<section>
+<section id="cmp" hidden>
   <h2>4. Comparativo</h2>
   <label class="q">Se você fosse usar um destes fichamentos na sua revisão de literatura,
     qual usaria?<small>considere fidelidade, completude e utilidade</small></label>
@@ -494,6 +504,11 @@ document.getElementById('secrows').innerHTML=SECS.map(s=>`
   </div>`).join('');
 // "outro" abre campo de texto junto aos chips
 document.getElementById('secrows').addEventListener('change',e=>{
+  // Comparativo só aparece quando as 14 notas (A+B) estiverem dadas
+  if(e.target.name?.startsWith('s')&&SECS.every(s=>
+    document.querySelector(`input[name=sA_${s}]:checked`)&&
+    document.querySelector(`input[name=sB_${s}]:checked`)))
+    document.getElementById('cmp').hidden=false;
   if(e.target.value!=='other')return;
   const inp=e.target.closest('.errd').querySelector('.eon');
   inp.style.display=e.target.checked?'block':'none';
