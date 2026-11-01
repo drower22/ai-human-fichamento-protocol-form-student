@@ -71,6 +71,14 @@
   .sectxt .refs{font-size:13px;color:var(--slate)}
   .qualblk{background:#f8fafc;border:1px solid var(--line);border-radius:12px;
     padding:18px 22px;margin-top:20px}
+  .vt{display:flex;gap:10px;align-items:baseline;margin:7px 0}
+  .vt>div{flex:1}
+  .vb{flex:0 0 76px;text-align:center;font-size:11px;font-weight:700;
+    border-radius:999px;padding:3px 8px;letter-spacing:.4px}
+  .vu{background:#dcfce7;color:#166534}
+  .vd{background:#fef9c3;color:#854d0e}
+  .vn{background:#e5e7eb;color:#6b7280}
+  .vx{background:#dbeafe;color:#1d4ed8}
   .steps{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;
     padding:12px 18px 12px 34px;margin:14px 0;font-size:14px;color:var(--ink)}
   .steps li{margin:3px 0}
@@ -373,14 +381,24 @@ B:{executive_summary:'[MOCK] Este fichamento descreve o artigo como um estudo so
 
 // render por seção — cada linha da avaliação puxa só a sua parte do fichamento
 function renderSection(s,o){
-  const pos=(o.theory_verdicts||[]).filter(t=>t.verdict&&t.verdict!=='does_not_use');
   const refs=r=>(r&&r.length)?`<span class="refs"> [${r.map(esc).join('; ')}]</span>`:'';
   switch(s){
     case 'executive_summary': return `<p>${esc(o.executive_summary)}</p>`;
     case 'research_question': return `<p>${esc(o.research_question)}</p>`;
-    case 'theories': return `<ul>${pos.map(t=>
-      `<li><b>${esc(t.name||t.item_id)}</b> — ${VL[t.verdict]||t.verdict}${refs(t.source_refs)}${t.quote?`<br><span class="refs">${esc(t.quote)}</span>`:''}</li>`).join('')}
-      ${(o.theories||[]).map(t=>`<li><b>${esc(t.name)}</b> (outra)${refs(t.source_refs)}</li>`).join('')||''}</ul>`;
+    case 'theories':{
+      const badge={uses:'<span class="vb vu">USA</span>',
+        discusses:'<span class="vb vd">DISCUTE</span>',
+        does_not_use:'<span class="vb vn">NÃO USA</span>'};
+      const rows=(o.theory_verdicts||[]).map(t=>`
+        <div class="vt">${badge[t.verdict]||`<span class="vb">${esc(t.verdict||'?')}</span>`}
+          <div><b>${esc(t.name||t.item_id)}</b>${refs(t.source_refs)}
+          ${t.quote?`<br><span class="refs">${esc(t.quote)}</span>`:''}</div>
+        </div>`).join('');
+      const extra=(o.theories||[]).map(t=>
+        `<div class="vt"><span class="vb vx">OUTRA</span>
+          <div><b>${esc(t.name)}</b>${refs(t.source_refs)}</div></div>`).join('');
+      return rows+extra;
+    }
     case 'key_concepts': return `<ul>${(o.key_concepts||[]).map(c=>
       `<li><b>${esc(c.concept)}:</b> ${esc(c.definition)}${refs(c.source_refs)}</li>`).join('')}</ul>`;
     case 'methodology': return `<p>${[o.methodology?.design,o.methodology?.study_type,
