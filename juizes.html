@@ -51,22 +51,26 @@
     padding:16px 20px;font-size:15px;margin-bottom:18px;display:none}
   .warndemo{background:#fef9c3;border:1px solid #fde047;color:#854d0e;border-radius:10px;
     padding:12px 18px;font-size:14px;font-weight:600;margin-bottom:18px;display:none}
-  /* layout lado a lado: fichamento a esquerda, avaliacao a direita */
-  .cols{display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:start}
-  @media(max-width:1000px){.cols{grid-template-columns:1fr}}
-  .viewer{position:sticky;top:16px;background:#f8fafc;border:1px solid var(--line);
-    border-radius:12px;max-height:86vh;overflow:auto}
-  .tabbar{display:flex;gap:8px;padding:14px 16px 0;position:sticky;top:0;
-    background:#f8fafc;z-index:2;padding-bottom:12px;border-bottom:1px solid var(--soft)}
-  .tab{flex:1;background:#fff;color:var(--navy);border:1.5px solid var(--line);
-    border-radius:10px;font-size:16px;font-weight:700;padding:10px;cursor:pointer}
+  /* linha por seção: texto a esquerda, nota a direita — rolam juntos */
+  .tabbar{display:flex;gap:10px;align-items:center;position:sticky;top:0;
+    background:#f8fafc;padding:10px 0 12px;border-bottom:1px solid var(--soft);
+    z-index:5;margin-bottom:4px}
+  .tab{background:#fff;color:var(--navy);border:1.5px solid var(--line);
+    border-radius:10px;font-size:16px;font-weight:700;padding:10px 22px;cursor:pointer}
   .tab.on{background:var(--blue);color:#fff;border-color:var(--blue)}
-  .fbody{padding:18px 22px 24px}
-  .fbody h4{font-size:13px;color:var(--slate);text-transform:uppercase;
-    letter-spacing:.6px;margin:18px 0 5px}
-  .fbody p,.fbody li{font-size:15px;color:var(--ink);line-height:1.65}
-  .fbody ul{list-style:disc;padding-left:22px}
-  .fbody .refs{font-size:13px;color:var(--slate)}
+  .tabhint{font-size:13px;color:var(--slate);margin-left:6px}
+  .secrow{display:grid;grid-template-columns:1.15fr 1fr;gap:24px;align-items:start;
+    padding:18px 0;border-bottom:1px solid var(--line)}
+  @media(max-width:1000px){.secrow{grid-template-columns:1fr}}
+  .sectxt{background:#f8fafc;border:1px solid var(--line);border-radius:12px;
+    padding:16px 20px;min-height:80px}
+  .sectxt h4{font-size:13px;color:var(--slate);text-transform:uppercase;
+    letter-spacing:.6px;margin:0 0 8px}
+  .sectxt p,.sectxt li{font-size:15px;color:var(--ink);line-height:1.65}
+  .sectxt ul{list-style:disc;padding-left:22px;margin:6px 0}
+  .sectxt .refs{font-size:13px;color:var(--slate)}
+  .qualblk{background:#f8fafc;border:1px solid var(--line);border-radius:12px;
+    padding:18px 22px;margin-top:20px}
   .panelT{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:6px}
   .tcle{border:1px solid var(--line);border-radius:12px;background:#f8fafc;
     padding:20px 24px;max-height:340px;overflow-y:auto;font-size:15px;
@@ -218,38 +222,34 @@
 
 <section>
   <h2>3. Avaliação</h2>
-  <p class="desc">Alterne entre A e B no painel da esquerda e dê as notas do fichamento
-  visível na direita. BARS 1–7: âncoras em 1, 4 e 7; as notas intermediárias interpolam.</p>
+  <p class="desc">Alterne entre A e B nas abas. Cada seção mostra o texto do fichamento
+  à esquerda e a nota à direita — os dois rolam juntos. BARS 1–7: âncoras em 1, 4 e 7;
+  as notas intermediárias interpolam.</p>
   <div class="pairinfo" id="pairinfo"></div>
-  <div class="cols">
-    <div class="viewer">
-      <div class="tabbar">
-        <button type="button" class="tab on" id="tabA">Fichamento A</button>
-        <button type="button" class="tab" id="tabB">Fichamento B</button>
-      </div>
-      <div id="viewerBody"></div>
+  <div class="tabbar">
+    <button type="button" class="tab on" id="tabA">Fichamento A</button>
+    <button type="button" class="tab" id="tabB">Fichamento B</button>
+    <span class="tabhint">seção por linha: texto à esquerda · nota à direita</span>
+  </div>
+  <div id="secrows"></div>
+  <div class="qualblk">
+    <div id="finalA">
+      <p class="panelT">Considerações finais — Fichamento A</p>
+      <label class="q">O que você questionaria ou corrigiria no Fichamento A?</label>
+      <textarea name="qa_A" class="short"></textarea>
+      <label class="q">O que faltou no Fichamento A?</label>
+      <textarea name="miss_A" class="short"></textarea>
+      <label class="q">Nota sobre os erros<small>opcional — descreva os erros marcados, se "outro" ou se quiser detalhar</small></label>
+      <textarea name="enote_A" class="short"></textarea>
     </div>
-    <div>
-      <div id="panelA">
-        <p class="panelT">Notas do Fichamento A</p>
-        <div id="scoreA"></div>
-        <label class="q">O que você questionaria ou corrigiria no Fichamento A?</label>
-        <textarea name="qa_A" class="short"></textarea>
-        <label class="q">O que faltou no Fichamento A?</label>
-        <textarea name="miss_A" class="short"></textarea>
-        <label class="q">Nota sobre os erros<small>opcional — descreva os erros marcados, se "outro" ou se quiser detalhar</small></label>
-        <textarea name="enote_A" class="short"></textarea>
-      </div>
-      <div id="panelB" hidden>
-        <p class="panelT">Notas do Fichamento B</p>
-        <div id="scoreB"></div>
-        <label class="q">O que você questionaria ou corrigiria no Fichamento B?</label>
-        <textarea name="qa_B" class="short"></textarea>
-        <label class="q">O que faltou no Fichamento B?</label>
-        <textarea name="miss_B" class="short"></textarea>
-        <label class="q">Nota sobre os erros<small>opcional — descreva os erros marcados, se "outro" ou se quiser detalhar</small></label>
-        <textarea name="enote_B" class="short"></textarea>
-      </div>
+    <div id="finalB" hidden>
+      <p class="panelT">Considerações finais — Fichamento B</p>
+      <label class="q">O que você questionaria ou corrigiria no Fichamento B?</label>
+      <textarea name="qa_B" class="short"></textarea>
+      <label class="q">O que faltou no Fichamento B?</label>
+      <textarea name="miss_B" class="short"></textarea>
+      <label class="q">Nota sobre os erros<small>opcional — descreva os erros marcados, se "outro" ou se quiser detalhar</small></label>
+      <textarea name="enote_B" class="short"></textarea>
     </div>
   </div>
 </section>
@@ -357,29 +357,31 @@ B:{executive_summary:'[MOCK] Este fichamento descreve o artigo como um estudo so
   {finding:'Propõe-se um modelo integrado de gestão estratégica.',type:'model',quote:'',source_refs:[]}],
  contribution:{theoretical:'[MOCK] Propõe novo modelo de gestão estratégica.',practical:'[MOCK] Recomenda a adoção do modelo por empresas.'}}};
 
-function renderFich(o){
+// render por seção — cada linha da avaliação puxa só a sua parte do fichamento
+function renderSection(s,o){
   const pos=(o.theory_verdicts||[]).filter(t=>t.verdict&&t.verdict!=='does_not_use');
   const refs=r=>(r&&r.length)?`<span class="refs"> [${r.map(esc).join('; ')}]</span>`:'';
-  return `
-  <div class="fbody">
-    <h4>Resumo executivo</h4><p>${esc(o.executive_summary)}</p>
-    <h4>Questão de pesquisa</h4><p>${esc(o.research_question)}</p>
-    <h4>Teorias</h4>
-    <ul>${pos.map(t=>`<li><b>${esc(t.name||t.item_id)}</b> — ${VL[t.verdict]||t.verdict}${refs(t.source_refs)}${t.quote?`<br><span class="refs">${esc(t.quote)}</span>`:''}</li>`).join('')}
-    ${(o.theories||[]).map(t=>`<li><b>${esc(t.name)}</b> (outra)${refs(t.source_refs)}</li>`).join('')||''}</ul>
-    <h4>Conceitos-chave</h4>
-    <ul>${(o.key_concepts||[]).map(c=>`<li><b>${esc(c.concept)}:</b> ${esc(c.definition)}${refs(c.source_refs)}</li>`).join('')}</ul>
-    <h4>Metodologia</h4>
-    <p>${[o.methodology?.design,o.methodology?.study_type,o.methodology?.sample_type&&'Amostra: '+o.methodology.sample_type,
-      o.methodology?.sample_size!=null&&'N='+o.methodology.sample_size,o.methodology?.sector&&'Setor: '+o.methodology.sector,
-      o.methodology?.period&&'Período: '+o.methodology.period,(o.methodology?.methods||[]).length&&'Métodos: '+o.methodology.methods.join(', '),
-      o.methodology?.analysis_note].filter(Boolean).map(esc).join('. ')||'—'}${refs(o.methodology?.source_refs)}</p>
-    <h4>Achados principais</h4>
-    <ul>${(o.main_findings||[]).map(f=>`<li>${esc(f.finding)} <span class="refs">[${TL[f.type]||f.type}]</span>${refs(f.source_refs)}</li>`).join('')}</ul>
-    <h4>Contribuição</h4>
-    <p><b>Teórica:</b> ${esc(o.contribution?.theoretical||'—')}<br>
-    <b>Prática:</b> ${esc(o.contribution?.practical||'—')}</p>
-  </div>`;
+  switch(s){
+    case 'executive_summary': return `<p>${esc(o.executive_summary)}</p>`;
+    case 'research_question': return `<p>${esc(o.research_question)}</p>`;
+    case 'theories': return `<ul>${pos.map(t=>
+      `<li><b>${esc(t.name||t.item_id)}</b> — ${VL[t.verdict]||t.verdict}${refs(t.source_refs)}${t.quote?`<br><span class="refs">${esc(t.quote)}</span>`:''}</li>`).join('')}
+      ${(o.theories||[]).map(t=>`<li><b>${esc(t.name)}</b> (outra)${refs(t.source_refs)}</li>`).join('')||''}</ul>`;
+    case 'key_concepts': return `<ul>${(o.key_concepts||[]).map(c=>
+      `<li><b>${esc(c.concept)}:</b> ${esc(c.definition)}${refs(c.source_refs)}</li>`).join('')}</ul>`;
+    case 'methodology': return `<p>${[o.methodology?.design,o.methodology?.study_type,
+      o.methodology?.sample_type&&'Amostra: '+o.methodology.sample_type,
+      o.methodology?.sample_size!=null&&'N='+o.methodology.sample_size,
+      o.methodology?.sector&&'Setor: '+o.methodology.sector,
+      o.methodology?.period&&'Período: '+o.methodology.period,
+      (o.methodology?.methods||[]).length&&'Métodos: '+o.methodology.methods.join(', '),
+      o.methodology?.analysis_note].filter(Boolean).map(esc).join('. ')||'—'}${refs(o.methodology?.source_refs)}</p>`;
+    case 'main_findings': return `<ul>${(o.main_findings||[]).map(f=>
+      `<li>${esc(f.finding)} <span class="refs">[${TL[f.type]||f.type}]</span>${refs(f.source_refs)}</li>`).join('')}</ul>`;
+    case 'contribution': return `<p><b>Teórica:</b> ${esc(o.contribution?.theoretical||'—')}<br>
+      <b>Prática:</b> ${esc(o.contribution?.practical||'—')}</p>`;
+  }
+  return '';
 }
 
 // link pessoal ?j=<nome>: travado, sem J# — o juiz vê só o próprio nome
@@ -414,10 +416,15 @@ let PAIR=null,cur='A';
 const showTab=k=>{cur=k;
   document.getElementById('tabA').classList.toggle('on',k==='A');
   document.getElementById('tabB').classList.toggle('on',k==='B');
-  document.getElementById('viewerBody').innerHTML=PAIR?renderFich(PAIR[k]):'';
-  document.getElementById('panelA').hidden=k!=='A';
-  document.getElementById('panelB').hidden=k!=='B';
-  document.querySelector('.viewer').scrollTop=0;};
+  SECS.forEach(s=>{
+    document.getElementById('txtA_'+s).hidden=k!=='A';
+    document.getElementById('txtB_'+s).hidden=k!=='B';
+    document.getElementById('paneA_'+s).hidden=k!=='A';
+    document.getElementById('paneB_'+s).hidden=k!=='B';
+    if(PAIR)document.getElementById('txt'+k+'_'+s).innerHTML=renderSection(s,PAIR[k]);
+  });
+  document.getElementById('finalA').hidden=k!=='A';
+  document.getElementById('finalB').hidden=k!=='B';};
 document.getElementById('tabA').onclick=()=>showTab('A');
 document.getElementById('tabB').onclick=()=>showTab('B');
 
@@ -462,28 +469,36 @@ const ERRS=[
  ['extrapolation','Extrapolação','afirma além do que o artigo sustenta'],
  ['invalid_source_ref','Ref. inválida','(p.N Lnnn) não existe ou não sustenta a afirmação'],
  ['other','Outro','descreva na nota de erros abaixo']];
-const scoreBlock=k=>SECS.map(s=>`
-  <div class="slot"><h3>${PT[s]}</h3>
-    <p class="anch"><b>1</b> ${ANCHORS[s].a1}<br><b>4</b> ${ANCHORS[s].a4}<br><b>7</b> ${ANCHORS[s].a7}</p>
-    <div class="radios">${[1,2,3,4,5,6,7].map(n=>
-      `<label><input type="radio" name="s${k}_${s}" value="${n}"> ${n}</label>`).join('')}
+// uma linha por seção: texto à esquerda, BARS+taxonomia à direita (A e B lado a lado)
+const scoreSide=(k,s)=>`
+  <div class="radios">${[1,2,3,4,5,6,7].map(n=>
+    `<label><input type="radio" name="s${k}_${s}" value="${n}"> ${n}</label>`).join('')}
+  </div>
+  <details class="errd"><summary>Erros nesta seção (opcional)</summary>
+    <div class="echips">${ERRS.map(([c,l,d])=>`
+      <label title="${esc(d)}"><input type="checkbox" name="e_${k}_${s}" value="${c}">${l}</label>`).join('')}
     </div>
-    <details class="errd"><summary>Erros nesta seção (opcional)</summary>
-      <div class="echips">${ERRS.map(([c,l,d])=>`
-        <label title="${esc(d)}"><input type="checkbox" name="e_${k}_${s}" value="${c}">${l}</label>`).join('')}
-      </div>
-      <input type="text" name="eo_${k}_${s}" class="eon" placeholder="Qual erro? descreva brevemente" style="display:none;margin-top:8px">
-    </details>
+    <input type="text" name="eo_${k}_${s}" class="eon" placeholder="Qual erro? descreva brevemente" style="display:none;margin-top:8px">
+  </details>`;
+document.getElementById('secrows').innerHTML=SECS.map(s=>`
+  <div class="secrow">
+    <div class="sectxt"><h4>${PT[s]}</h4>
+      <div id="txtA_${s}"><p class="refs">— o texto aparece aqui depois de carregar o par —</p></div>
+      <div id="txtB_${s}" hidden></div>
+    </div>
+    <div class="slot" style="margin:0"><h3>${PT[s]}</h3>
+      <p class="anch"><b>1</b> ${ANCHORS[s].a1}<br><b>4</b> ${ANCHORS[s].a4}<br><b>7</b> ${ANCHORS[s].a7}</p>
+      <div id="paneA_${s}">${scoreSide('A',s)}</div>
+      <div id="paneB_${s}" hidden>${scoreSide('B',s)}</div>
+    </div>
   </div>`).join('');
-document.getElementById('scoreA').innerHTML=scoreBlock('A');
-document.getElementById('scoreB').innerHTML=scoreBlock('B');
 // "outro" abre campo de texto junto aos chips
-document.querySelectorAll('#scoreA,#scoreB').forEach(sc=>sc.addEventListener('change',e=>{
+document.getElementById('secrows').addEventListener('change',e=>{
   if(e.target.value!=='other')return;
   const inp=e.target.closest('.errd').querySelector('.eon');
   inp.style.display=e.target.checked?'block':'none';
   if(e.target.checked)inp.focus();
-}));
+});
 
 document.getElementById('f').addEventListener('submit',async e=>{
   e.preventDefault();
