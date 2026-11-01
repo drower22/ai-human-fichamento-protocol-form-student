@@ -382,12 +382,15 @@ function renderFich(o){
   </div>`;
 }
 
-// link pessoal ?j=N: fixa o código do juiz e esconde a lista
-const _j=new URLSearchParams(location.search).get('j');
-if(_j&&/^[1-4]$/.test(_j)){
+// link pessoal ?j=<nome>: travado, sem J# — o juiz vê só o próprio nome
+const q=s=>document.querySelector(s);
+const _j=(new URLSearchParams(location.search).get('j')||'').toLowerCase();
+const NAMES={natalia:'Natália',bruno:'Bruno',marcos:'Marcos',gustavo:'Gustavo'};
+if(_j&&(NAMES[_j]||/^[1-4]$/.test(_j))){
   const sel=q('[name="judge_id"]'),lock=document.getElementById('judgeLock');
-  sel.value='J'+_j;sel.hidden=true;lock.hidden=false;
-  lock.value='Identificado pelo seu link';   // J# nunca é exibido ao juiz
+  if(NAMES[_j]){sel.add(new Option(_j,_j));sel.value=_j;lock.value=NAMES[_j];}
+  else{sel.value='J'+_j;lock.value='Identificado pelo seu link';} // teste interno
+  sel.hidden=true;lock.hidden=false;
   // link do piloto: rodada e par também travados — nada para escolher na lista
   for(const [nm,val,lid,label] of [['round','0','roundLock','0 — Piloto'],
                                   ['article_id','PILOTO','artLock','PILOTO']]){
