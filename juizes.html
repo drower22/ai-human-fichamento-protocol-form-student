@@ -121,6 +121,15 @@
 <div class="ok" id="ok"></div>
 <div class="warndemo" id="demo">MODO DEMONSTRAÇÃO — este par contém conteúdo de exemplo, não os fichamentos reais.</div>
 
+<div id="badlink" hidden>
+  <div class="done">
+    <h2>Link inválido</h2>
+    <p>Este link de avaliação não é válido.<br>
+    Confira se copiou o endereço completo que você recebeu por e-mail.<br>
+    Em caso de dúvida, escreva para <b>ismar.drower@ufpr.br</b>.</p>
+  </div>
+</div>
+
 <form id="f" novalidate>
 
 <section id="tcleSec">
@@ -416,16 +425,15 @@ function renderSection(s,o){
   return '';
 }
 
-// link pessoal ?j=<nome>: travado, sem J# — o juiz vê só o próprio nome
+// link pessoal ?j=<token>: travado, sem J# — o juiz vê só o próprio nome.
+// Produção: só os 4 tokens abrem — qualquer outro ?j= ou ausência de token cai na tela de link inválido.
 const q=s=>document.querySelector(s);
 const _j=(new URLSearchParams(location.search).get('j')||'')
-  .normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();  // aceita natália/natalia
-const NAMES={nz4f:'Natália',bq8w:'Bruno',mv3r:'Marcos',gx6t:'Gustavo',
-  teste:'Teste'};
-if(_j&&(NAMES[_j]||/^[1-4]$/.test(_j))){
+  .normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const NAMES={nz4f:'Natália',bq8w:'Bruno',mv3r:'Marcos',gx6t:'Gustavo'};
+if(NAMES[_j]){
   const sel=q('[name="judge_id"]'),lock=document.getElementById('judgeLock');
-  if(NAMES[_j]){sel.add(new Option(_j,_j));sel.value=_j;lock.value=NAMES[_j];}
-  else{sel.value='J'+_j;lock.value='Identificado pelo seu link';} // teste interno
+  sel.add(new Option(_j,_j));sel.value=_j;lock.value=NAMES[_j];
   sel.hidden=true;lock.hidden=false;
   // link do piloto: rodada e par também travados — nada para escolher na lista
   for(const [nm,val,lid,label] of [['round','0','roundLock','0 — Piloto'],
@@ -433,6 +441,9 @@ if(_j&&(NAMES[_j]||/^[1-4]$/.test(_j))){
     const s=q(`[name="${nm}"]`),l=document.getElementById(lid);
     s.value=val;s.hidden=true;l.hidden=false;l.value=label;
   }
+}else{
+  document.getElementById('badlink').hidden=false;
+  document.getElementById('f').hidden=true;
 }
 
 // TCLE gate: aceite troca de tela (termo some, form aparece)
